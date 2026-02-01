@@ -1,42 +1,105 @@
-# Timeline Creator
+# Timeline for Structured Analytic Techniques
 
-A localhost web app that displays a timeline and lets you add events via a form. Events require **Name**, **Description**, and **Time** (date + time). Data is validated and persisted in the browser with `localStorage`.
+A lightweight, browser-based timeline tool for **Structured Analytic Techniques (SAT)**. Use it to capture events with context (what/why/who/where), attach sources, and analyze patterns over time using zoom, filtering, and a clean event-detail workflow. Runs fully in the browser (no backend required) and works offline.
 
-## Features
+![App screenshot](assets/img/screenshot.png)
 
-- **Form**: Name, Description, Time (date+time) with required validation and trimmed inputs
-- **Time**: Stored as ISO 8601; timeline sorted by time (ascending)
-- **Persistence**: Events saved to `localStorage` and survive page refresh
-- **UI**: Field-level error messages, empty state when no events, immediate render on submit (no refresh)
 
-## Run instructions
+---
 
-1. **Option A – Open file directly**  
-   Double-click `index.html` or open it in your browser (e.g. drag and drop into Chrome).  
-   Works as-is; some browsers may restrict `file://` for scripts. If the app doesn’t load, use Option B.
+## What it does
 
-2. **Option B – Local server (recommended)**  
-   From this directory, start a simple HTTP server:
+- Create timestamped events (**name, description, source, date, time**)
+- Visualize events on a time axis with connectors and numbered dots
+- Alternate event placement the timeline to improve readability
+- Click events to open a dedicated **Event Details** panel
+- Use a **scale range** to focus on a specific time window
+- Zoom in/out to support analysis at different levels of detail
+- Manage UI panels from **Layouts** (show/hide + reset layouts)
+- Import/export events as **JSON** from **File**
 
-   **Node (npx):**
-   ```bash
-   npx --yes serve -l 3000
-   ```
-   Then open: **http://localhost:3000**
+---
 
-   **Python 3:**
-   ```bash
-   python -m http.server 3000
-   ```
-   Then open: **http://localhost:3000**
+## Quick start
 
-3. Use the form to add events; they appear on the timeline immediately and are kept in `localStorage`.
+### Run locally
+This is a static web app.
 
-## Project layout
+1. Clone the repo
+2. Open `index.html` in a browser  
+   *(recommended: run a local server for best results)*
 
-- `index.html` – Page structure, form, timeline container
-- `styles.css` – Layout and styling
-- `app.js` – Validation, `localStorage`, unique IDs, timeline render
-- `README.md` – This file
+Example local server:
+- VS Code: “Live Server” extension  
+- Or any simple HTTP server (e.g. Python, Node)
 
-No build step or dependencies required for Option A; for Option B you only need Node or Python.
+### Use on GitHub Pages
+Enable GitHub Pages from the repo settings and point it to `/ (root)` or `/docs` depending on your setup.
+
+---
+
+## How to use
+
+### 1) Create events
+Open **Create New Event** and add:
+- **Name** (short, clear headline)
+- **Description** (brief who/what/where/when/why)
+- **Source** (URL)
+- **Date** and **Time**
+
+Click **Add event**.
+
+### 2) Navigate and analyze
+- Use the **Scale range** inputs to set a date window and click **Apply**
+- Use the **brush/slider** to refine the visible range
+- Use **Zoom** to analyze dense clusters or the big picture
+- Click an event dot/box (or the item in **Events**) to open **Event Details**
+
+### 3) Panels / layout
+Use **Layouts** to toggle:
+- Show Create New Event
+- Show Events
+- Show Event Details
+- Reset layouts
+
+### 4) Import / export / wipe
+Use **File** to:
+- **Import Events** (JSON)
+- **Export Events** (JSON)
+- **Download JSON Template**
+- **Remove all Events** (start from a blank timeline)
+
+---
+
+## Data storage
+
+Events are saved in your browser using **localStorage** by default.  
+This means:
+- No server or database is required
+- Your events stay on the same browser/device unless exported
+- Use **File → Export Events** to share or version your dataset
+
+---
+
+## JSON format (import/export)
+
+The import/export uses an **array** of event objects with:
+
+- `name` (string)
+- `description` (string)
+- `source` (string URL)
+- `date` (YYYY-MM-DD)
+- `time` (HH:MM)
+
+Example:
+
+```json
+[
+  {
+    "name": "North Korea launched ballistic missiles",
+    "description": "Reports said multiple ballistic missiles were fired toward the sea off the DPRK east coast, drawing condemnation and underscoring continued weapons testing.",
+    "source": "https://www.reuters.com",
+    "date": "2026-01-27",
+    "time": "15:50"
+  }
+]
