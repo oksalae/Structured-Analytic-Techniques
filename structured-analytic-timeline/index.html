@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timeline Creator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <section class="timeline-section" id="timeline-section">
+      <div id="timeline-toolbar" class="timeline-toolbar">
+        <div class="timeline-toolbar-inner">
+          <header class="timeline-header-bar" id="timeline-header-bar">
+            <div class="timeline-header-left">
+              <div class="layouts-wrap" id="layouts-wrap">
+                <button type="button" class="btn-file-menu" id="btn-file-menu" aria-haspopup="true" aria-expanded="false" aria-label="File menu">File</button>
+                <button type="button" class="btn-layouts" id="btn-layouts" aria-haspopup="true" aria-expanded="false" aria-label="Layouts menu">Layouts</button>
+              </div>
+            </div>
+            <h2 class="timeline-header-title" id="timeline-header-title">Timeline for Structured Analytic Techniques</h2>
+            <div class="timeline-header-right">
+              <div class="timeline-view-controls">
+                <button type="button" class="btn-zoom-out" id="btn-zoom-out" title="Zoom out">−</button>
+                <span class="zoom-label" id="zoom-label">100%</span>
+                <button type="button" class="btn-zoom-in" id="btn-zoom-in" title="Zoom in">+</button>
+                <button type="button" class="btn-reset-view" id="btn-reset-view">Reset view</button>
+              </div>
+            </div>
+          </header>
+          <div class="timeline-scale-strip">
+            <div class="scale-strip-row">
+              <div class="scale-range-group" id="scale-range-group">
+                <label for="scale-first-date" class="year-scale-label">Scale range</label>
+                <input type="date" id="scale-first-date" class="year-scale-input scale-date-input" aria-label="First date on scale">
+                <span class="year-scale-sep">–</span>
+                <input type="date" id="scale-last-date" class="year-scale-input scale-date-input" aria-label="Last date on scale">
+                <button type="button" class="btn-year-scale-apply" id="btn-year-scale-apply">Apply</button>
+              </div>
+              <div class="scale-bar-spacer scale-bar-spacer-left" aria-hidden="true"></div>
+              <div class="scale-bar-wrap" id="scale-bar-wrap">
+                <div class="timeline-scaler-overview" id="timeline-scaler-overview">
+                  <div class="timeline-scaler-selection" id="timeline-scaler-selection"></div>
+                  <div class="timeline-scaler-handle timeline-scaler-handle-left" id="scaler-handle-left"></div>
+                  <div class="timeline-scaler-handle timeline-scaler-handle-right" id="scaler-handle-right"></div>
+                </div>
+              </div>
+              <div class="scale-bar-spacer scale-bar-spacer-right">
+                <span class="scale-range-display" id="scaler-range-display" aria-live="polite">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-toolbar-resize-handle" id="timeline-toolbar-resize-handle" role="separator" aria-label="Drag to resize toolbar" title="Drag to resize">⋮⋮</div>
+      </div>
+      <div id="timeline-viewport" class="timeline-viewport">
+        <div id="timeline-empty" class="timeline-empty" hidden>
+          <p>No events yet. Add one in the Add Event panel.</p>
+        </div>
+        <div id="timeline-world" class="timeline-world" hidden>
+          <div id="timeline-horizontal" class="timeline-horizontal">
+            <div class="timeline-callouts" id="timeline-callouts" aria-label="Event callouts"></div>
+            <div class="timeline-line" id="timeline-line" aria-label="Timeline with markers">
+              <div class="timeline-line-bar" id="timeline-line-bar"></div>
+              <div class="timeline-axis">
+                <span class="axis-label" id="axis-start"></span>
+                <span class="axis-label" id="axis-end"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="floating-panel" id="panel-add-event" data-panel-id="add-event" aria-label="Create New Event">
+      <div class="panel-drag-handle" id="panel-add-event-handle">
+        <h2 class="panel-title" id="form-title">Create New Event</h2>
+        <button type="button" class="btn-panel-hide" id="btn-hide-add-event" aria-label="Hide panel">−</button>
+      </div>
+      <div class="panel-body">
+        <form id="event-form" novalidate>
+          <div class="field">
+            <label for="event-name">Name <span class="required">*</span></label>
+            <input type="text" id="event-name" name="name" autocomplete="off" placeholder="Event name">
+            <span class="error" id="error-name" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="event-description">Description <span class="required">*</span></label>
+            <textarea id="event-description" name="description" rows="2" placeholder="What happened?"></textarea>
+            <span class="error" id="error-description" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="event-source">Source</label>
+            <input type="url" id="event-source" name="source" autocomplete="off" placeholder="https://...">
+            <span class="error" id="error-source" aria-live="polite"></span>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="event-date">Date <span class="required">*</span></label>
+              <input type="date" id="event-date" name="date">
+              <span class="error" id="error-date" aria-live="polite"></span>
+            </div>
+            <div class="field">
+              <label for="event-time">Time <span class="required">*</span></label>
+              <input type="time" id="event-time" name="time">
+              <span class="error" id="error-time" aria-live="polite"></span>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit" id="btn-submit">Add event</button>
+          <button type="button" class="btn-cancel" id="btn-cancel" hidden>Cancel</button>
+        </form>
+      </div>
+      <div class="resize-handle" id="panel-add-event-resize" aria-label="Resize"></div>
+    </div>
+    <div class="floating-panel" id="panel-events" data-panel-id="events" aria-label="Events list">
+      <div class="panel-drag-handle" id="panel-events-handle">
+        <h2 class="panel-title">Events</h2>
+        <button type="button" class="btn-panel-hide" id="btn-hide-events" aria-label="Hide panel">×</button>
+      </div>
+      <div class="panel-body">
+        <div id="events-list-summary" class="events-list-summary" aria-live="polite"></div>
+        <div id="events-list" class="events-list" aria-label="Event list"></div>
+      </div>
+      <div class="resize-handle" id="panel-events-resize" aria-label="Resize"></div>
+    </div>
+    <div class="floating-panel" id="panel-details" data-panel-id="details" aria-label="Event details">
+      <div class="panel-drag-handle" id="panel-details-handle">
+        <h2 class="panel-title">Event Details</h2>
+        <button type="button" class="btn-panel-hide" id="btn-hide-details" aria-label="Hide panel">−</button>
+      </div>
+      <div class="panel-body event-details-body">
+        <button type="button" class="event-details-close" id="event-details-close" aria-label="Clear selection">×</button>
+        <div id="event-details-content" class="event-details-content">
+          <p class="event-details-placeholder">Empty state — click an event on the timeline or in the Events list to view details.</p>
+        </div>
+      </div>
+      <div class="resize-handle" id="panel-details-resize" aria-label="Resize"></div>
+    </div>
+  </div>
+  <div id="overlay-root">
+    <div class="layouts-dropdown overlay-dropdown" id="layouts-dropdown" role="menu" hidden>
+      <div class="layouts-menu-item" role="menuitemcheckbox" aria-checked="true" id="layouts-toggle-add-event" tabindex="0">
+        <input type="checkbox" id="layouts-check-add-event" checked aria-hidden="true">
+        <label for="layouts-check-add-event">Show Add Event</label>
+      </div>
+      <div class="layouts-menu-item" role="menuitemcheckbox" aria-checked="true" id="layouts-toggle-events" tabindex="0">
+        <input type="checkbox" id="layouts-check-events" checked aria-hidden="true">
+        <label for="layouts-check-events">Show Events</label>
+      </div>
+      <div class="layouts-menu-item" role="menuitemcheckbox" aria-checked="true" id="layouts-toggle-details" tabindex="0">
+        <input type="checkbox" id="layouts-check-details" checked aria-hidden="true">
+        <label for="layouts-check-details">Show Event Details</label>
+      </div>
+    </div>
+    <div class="file-dropdown overlay-dropdown" id="file-dropdown" role="menu" hidden>
+      <button type="button" class="file-menu-item" id="file-import-events" role="menuitem">Import Events</button>
+      <button type="button" class="file-menu-item" id="file-export-events" role="menuitem">Export Events</button>
+      <button type="button" class="file-menu-item" id="file-download-template" role="menuitem">Download JSON Template</button>
+      <button type="button" class="file-menu-item file-menu-item-danger" id="file-remove-all" role="menuitem">Remove all Events</button>
+    </div>
+    <input type="file" id="json-file-input" accept=".json,application/json" hidden>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
