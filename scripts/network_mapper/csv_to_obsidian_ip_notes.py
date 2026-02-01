@@ -3,6 +3,10 @@ import os
 import re
 from collections import defaultdict
 from pathlib import Path
+from datetime import datetime
+import platform
+import subprocess
+from urllib.parse import quote
 
 IPV4_RE = re.compile(r"^\d{1,3}(\.\d{1,3}){3}$")
 
@@ -11,7 +15,6 @@ def is_ipv4(s: str) -> bool:
     if not IPV4_RE.match(s):
         return False
     parts = s.split(".")
-    # Basic numeric validity 0-255
     try:
         return all(0 <= int(p) <= 255 for p in parts)
     except ValueError:
@@ -19,22 +22,45 @@ def is_ipv4(s: str) -> bool:
 
 
 def safe_filename(ip: str) -> str:
-    # For IPv4, it's already safe. This is here for future-proofing.
     return ip
 
 
+def get_default_general_output_root() -> Path:
+    """
+    Windows: %USERPROFILE%\\Documents\\PCAP_Obsidian_Output
+    Other OS: ~/Documents/PCAP_Obsidian_Output (fallback to home if Documents missing)
+    """
+    home = Path.home()
+    docs = home / "Documents"
+    base = docs if docs.exists() else home
+    return base / "PCAP_Obsidian_Output"
+
+
+def open_in_obsidian(target_path: Path) -> bool:
+    """
+    Best-effort: open a specific file in Obsidian using the URI scheme.
+    Returns True if we successfully launched a command, False otherwise.
+    """
+    try:
+        abs_path = target_path.resolve()
+        uri = "obsidian://open?path=" + quote(str(abs_path))
+
+        system = platform.system().lower()
+        if system == "windows":
+            # Use cmd /c start to invoke URI handler
+            subprocess.run(["cmd", "/c", "start", "", uri], check=False)
+            return True
+        elif system == "darwin":
+            subprocess.run(["open", uri], check=False)
+            return True
+        else:
+            subprocess.run(["xdg-open", uri], check=False)
+            return True
+    except Exception:
+        return False
+
+
 def parse_edges_csv(csv_path: Path):
-    """
-    Reads a CSV with at least: count,src_ip,dst_ip
-    Also tolerates "bad" rows where extra columns exist; we take the LAST two IPv4s on the row as src/dst.
-    Returns:
-      edges_dir[(src,dst)] = count_sum
-      edges_und[(a,b)] = count_sum (a<b)
-      peers_out[src][dst] = count_sum
-      peers_in[dst][src] = count_sum
-      all_ips = set()
-      stats about skipped lines
-    """
     edges_dir = defaultdict(int)
     peers_out = defaultdict(lambda: defaultdict(int))
     peers_in = defaultdict(lambda: defaultdict(int))
@@ -52,31 +78,24 @@ def parse_edges_csv(csv_path: Path):
             if not row:
                 continue
 
-            # Trim whitespace
             row = [c.strip() for c in row if c is not None]
 
-            # Must have a count in first column
             try:
                 count = int(row[0])
             except Exception:
                 skipped += 1
                 continue
 
-            # Collect all IPv4s in row (some rows have extra fields)
             ips = [c for c in row[1:] if is_ipv4(c)]
-
             if len(ips) < 2:
                 skipped += 1
                 continue
 
-            # Heuristic: take last two IPv4s on the row as src/dst
-            # This fixes rows like: count, A, B, B, C  -> uses B,C
             src, dst = ips[-2], ips[-1]
             if len(row) > 3:
                 fixed += 1
 
             if src == dst:
-                # ignore self-loops
                 continue
 
             edges_dir[(src, dst)] += count
@@ -85,7 +104,6 @@ def parse_edges_csv(csv_path: Path):
             all_ips.add(src)
             all_ips.add(dst)
 
-    # Build undirected aggregation too (optional use)
     edges_und = defaultdict(int)
     for (src, dst), c in edges_dir.items():
         a, b = sorted([src, dst])
@@ -102,13 +120,8 @@ def write_ip_note(
     peers_in: dict,
     top_n: int = 200,
 ):
-    """
-    Creates/overwrites IP markdown note.
-    Includes outbound and inbound peers with links.
-    """
     out_path = out_dir / f"{safe_filename(ip)}.md"
 
-    # Sort peers by count desc
     out_items = sorted(peers_out.get(ip, {}).items(), key=lambda kv: kv[1], reverse=True)[:top_n]
     in_items = sorted(peers_in.get(ip, {}).items(), key=lambda kv: kv[1], reverse=True)[:top_n]
 
@@ -152,14 +165,10 @@ def write_capture_summary(
     all_ips: set,
     top_n: int = 30,
 ):
-    """
-    Creates a single capture summary note with top edges.
-    """
     cap_dir = out_dir.parent / "Captures"
     cap_dir.mkdir(parents=True, exist_ok=True)
     cap_path = cap_dir / f"{capture_name}.md"
 
-    # Top directed edges
     top_dir = sorted(edges_dir.items(), key=lambda kv: kv[1], reverse=True)[:top_n]
     top_und = sorted(edges_und.items(), key=lambda kv: kv[1], reverse=True)[:top_n]
 
@@ -188,6 +197,7 @@ def write_capture_summary(
     lines.append("")
 
     cap_path.write_text("\n".join(lines), encoding="utf-8")
+    return cap_path
 
 
 def main():
@@ -197,15 +207,24 @@ def main():
     if not csv_path.exists():
         raise SystemExit(f"CSV not found: {csv_path}")
 
-    vault_out = Path(input("Output folder INSIDE your vault (e.g. C:\\Vault\\PCAP Entities\\IPs): ").strip().strip('"'))
-    vault_out.mkdir(parents=True, exist_ok=True)
-
     capture_name = input("Capture name (default: edges): ").strip()
     if not capture_name:
         capture_name = "edges"
 
     top_n = input("Max peers per section (default 200): ").strip()
     top_n = int(top_n) if top_n else 200
+
+    default_root = get_default_general_output_root()
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    default_run_dir = default_root / f"{capture_name}_{ts}" / "IPs"
+
+    print("\nOutput location options:")
+    print(f"  [Enter] = default general output folder: {default_run_dir}")
+    print("  Or paste an output folder INSIDE your vault (recommended if you want Obsidian links to work immediately).")
+    out_input = input("Output folder (Enter for default): ").strip().strip('"')
+
+    vault_out = Path(out_input) if out_input else default_run_dir
+    vault_out.mkdir(parents=True, exist_ok=True)
 
     print("\nParsing CSV (and repairing malformed rows)...")
     edges_dir, edges_und, peers_out, peers_in, all_ips, skipped, fixed = parse_edges_csv(csv_path)
@@ -224,12 +243,22 @@ def main():
             print(f"  {i}/{len(all_ips_sorted)} notes written")
 
     print("\nWriting capture summary...")
-    write_capture_summary(vault_out, capture_name, edges_dir, edges_und, all_ips)
+    summary_path = write_capture_summary(vault_out, capture_name, edges_dir, edges_und, all_ips)
 
     print("\nDone ✅")
-    print(f"IP notes folder: {vault_out}")
-    print(f"Capture summary: {vault_out.parent / 'Captures' / (capture_name + '.md')}")
-    print("\nOpen your vault in Obsidian and check Graph view. Each IP note links to its peers.")
+    print("Output written to:")
+    print(f"  IP notes folder : {vault_out}")
+    print(f"  Capture summary : {summary_path}")
+
+    # --- NEW: prompt to open in Obsidian ---
+    ans = input("\nOpen the capture summary in Obsidian now? (Y/N): ").strip().lower()
+    if ans in ("y", "yes"):
+        ok = open_in_obsidian(summary_path)
+        if ok:
+            print("Attempted to open Obsidian ✅")
+        else:
+            print("Could not launch Obsidian automatically. Make sure Obsidian is installed and the obsidian:// URI handler works.")
+            print(f"You can open this file manually: {summary_path}")
 
 
 if __name__ == "__main__":

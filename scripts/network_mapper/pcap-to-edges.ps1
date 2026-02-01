@@ -6,11 +6,9 @@ What it does (one run):
 - Asks for PCAP path (drag-drop supported)
 - Finds tshark.exe automatically (PATH or default install paths) or asks you
 - Uses capinfos.exe (if available) to compute % progress
-- Extracts IPv4 src/dst pairs (fast StreamWriter, no per-line Add-Content)
+- Extracts IPv4 src/dst pairs (in-memory counting; no intermediate CSVs)
 - Produces:
-    pairs.csv                (src_ip,dst_ip)
     edges.csv                (count,src_ip,dst_ip) directional
-    edges_undirected.csv     (count,ip_a,ip_b) undirected A<->B merged
 - Prints live progress and a top-10 summary
 
 Requirements:
@@ -89,10 +87,8 @@ Write-Host "Output:      $outDir" -ForegroundColor DarkGray
 if ($capinfos) { Write-Host "capinfos:    $capinfos" -ForegroundColor DarkGray } else { Write-Host "capinfos:    (not found; % progress disabled)" -ForegroundColor DarkGray }
 Write-Host ""
 
-# --- Output filenames ---
-$pairsPath  = Join-Path $outDir "pairs.csv"
+# --- Output filename (ONLY this one is produced) ---
 $edgesPath  = Join-Path $outDir "edges.csv"
-$uedgesPath = Join-Path $outDir "edges_undirected.csv"
 
 # --- Data structures ---
 $dirCounts   = New-Object "System.Collections.Generic.Dictionary[string,int64]"
@@ -125,10 +121,6 @@ if ($totalPkts -gt 0) {
 }
 Write-Host "  Tip: -n disables name resolution for speed." -ForegroundColor DarkGray
 Write-Host ""
-
-# FAST write: keep file handle open
-$pairsWriter = New-Object System.IO.StreamWriter($pairsPath, $false, [System.Text.Encoding]::ASCII)
-$pairsWriter.WriteLine("src_ip,dst_ip")
 
 # Start tshark as a process to stream stdout efficiently
 $psi = New-Object System.Diagnostics.ProcessStartInfo
@@ -176,14 +168,11 @@ while (-not $stdout.EndOfStream) {
   $null = $ipSeen.Add($src)
   $null = $ipSeen.Add($dst)
 
-  # Write pair
-  $pairsWriter.WriteLine("$src,$dst")
-
   # Directional count
   $k = "$src|$dst"
   if ($dirCounts.ContainsKey($k)) { $dirCounts[$k]++ } else { $dirCounts[$k] = 1 }
 
-  # Undirected count (sorted)
+  # Undirected count (sorted) - still computed (no file written)
   $a = $src; $b = $dst
   if ([string]::CompareOrdinal($a,$b) -gt 0) { $t=$a; $a=$b; $b=$t }
   $uk = "$a|$b"
@@ -208,8 +197,6 @@ while (-not $stdout.EndOfStream) {
 }
 
 $p.WaitForExit()
-$pairsWriter.Flush()
-$pairsWriter.Close()
 Write-Progress -Activity "Parsing PCAP" -Completed
 
 $errText = $stderr.ReadToEnd()
@@ -242,19 +229,9 @@ Write-Host "  Wrote: $edgesPath" -ForegroundColor DarkGray
 Write-Host ""
 
 # =========================
-# Stage 3/3: edges_undirected.csv
+# Stage 3/3: (no user-facing file)
 # =========================
-Write-Host "Stage 3/3: Writing edges_undirected.csv (A<->B merged)..." -ForegroundColor Green
-"count,ip_a,ip_b" | Out-File -Encoding ascii $uedgesPath
-
-$undirCounts.GetEnumerator() |
-  Sort-Object Value -Descending |
-  ForEach-Object {
-    $parts = $_.Key.Split("|", 2)
-    "{0},{1},{2}" -f $_.Value, $parts[0], $parts[1]
-  } | Add-Content -Encoding ascii $uedgesPath
-
-Write-Host "  Wrote: $uedgesPath" -ForegroundColor DarkGray
+Write-Host "Stage 3/3: (Skipped file export for undirected edges; still computed in-memory)" -ForegroundColor Green
 Write-Host ""
 
 # =========================
@@ -272,6 +249,4 @@ foreach ($e in $top10) {
 Write-Host ""
 Write-Host "All done ✅" -ForegroundColor Cyan
 Write-Host "Files created:" -ForegroundColor Cyan
-Write-Host "  $pairsPath"
 Write-Host "  $edgesPath"
-Write-Host "  $uedgesPath"
