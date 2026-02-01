@@ -56,12 +56,15 @@ Run the generator and provide:
 - Capture name (optional)
 - Output folder **inside your Obsidian vault** (recommended)
 
-After generation, open your vault and explore:
 
-![Graph view](assets/img/screenshot_3.png)
-
----
 
 ### 3) Explore results in Obsidian
 
-Open an IP note to see its strongest
+After generation, open your vault and explore:
+
+![Graph view](assets/img/screenshot_4.png)
+
+![Graph view](assets/img/screenshot_3.png)
+
+
+---
