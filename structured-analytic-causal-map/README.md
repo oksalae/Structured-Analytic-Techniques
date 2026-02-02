@@ -22,11 +22,12 @@ Runs offline, stores data in the browser during the session, and allows import/e
 ## 📸 Screenshots
 
 ### Full map view  
-*(from `assets/img/screenshot_1.png`)*  
+![App screenshot](assets/img/screenshot_1.png)
 Shows the complete causal map with nodes, arrows, toolbar, and navigation controls.
 
+
 ### Comment / annotation popup  
-*(from `assets/img/screenshot_2.png`)*  
+![Commenting Feature](assets/img/screenshot_2.png)
 Displays the fields for **Description** and **Source** that can be attached to any node.
 
 ---
