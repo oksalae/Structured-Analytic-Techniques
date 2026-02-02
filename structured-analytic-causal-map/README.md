@@ -19,6 +19,10 @@ Runs offline, stores data in the browser during the session, and allows import/e
 - JSON import/export  
 
 
+### Causal map overview
+![App screenshot](assets/img/screenshot_3.png)
+Shows a central main category branching into multiple sub-categories, with arrows indicating relationships and node action buttons for quick edits.
+
 ### Full map view  
 ![App screenshot](assets/img/screenshot_1.png)
 Shows the complete causal map with nodes, arrows, toolbar, and navigation controls.
