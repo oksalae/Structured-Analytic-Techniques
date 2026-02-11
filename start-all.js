@@ -1,7 +1,9 @@
 /**
- * Start hub (port 3000), Causal Map (8765), Timeline (8080), Circleboarding (8082), and Multiple Hypothesis (8083) from one terminal.
+ * Start hub and all tools with reserved ports per HUB-PAGE-INSTRUCTIONS.md:
+ * Hub 3000, Causal Map 8765, Timeline 8080, Circleboarding 8082,
+ * Multiple Hypothesis 8083, Competing Hypothesis 8084.
+ * Reserved for future: 8085, 8086, 8087, 8088.
  * Run from repo root: node start-all.js
- * Then open http://localhost:3000 for the hub.
  * Press Ctrl+C to stop all servers.
  */
 const http = require('http');
@@ -50,43 +52,42 @@ const hubServer = http.createServer((req, res) => {
   });
 });
 
-hubServer.listen(HUB_PORT, () => {
-  console.log(`Hub:    http://localhost:${HUB_PORT}`);
-});
+const SERVERS = [
+  { name: 'Hub', dir: null, port: HUB_PORT },
+  { name: 'Causal map', dir: 'structured-analytic-causal-map', port: 8765 },
+  { name: 'Timeline', dir: 'structured-analytic-timeline', port: 8080 },
+  { name: 'Circleboarding', dir: 'structured-analytic-circleboarding', port: 8082 },
+  { name: 'Multiple Hypothesis Generation', dir: 'structured-analytic-multiple-hypothesis-generation', port: 8083 },
+  { name: 'Competing Hypothesis', dir: 'structured-analysis-of-competing-hypothesis', port: 8084 },
+];
 
-function run(name, dir, script) {
-  const child = spawn('node', [script], {
-    cwd: path.join(ROOT, dir),
-    stdio: 'inherit',
-    shell: true,
+function run(entry) {
+  if (!entry.dir) return null;
+  const child = spawn(process.execPath, ['server.js'], {
+    cwd: path.join(ROOT, entry.dir),
+    stdio: ['ignore', 'ignore', 'inherit'],
   });
-  child.on('error', (err) => console.error(`[${name}] error:`, err));
+  child.on('error', (err) => console.error(`[${entry.name}] error:`, err));
   child.on('exit', (code) => {
-    if (code !== null && code !== 0) console.error(`[${name}] exited with ${code}`);
+    if (code !== null && code !== 0) console.error(`[${entry.name}] exited with ${code}`);
   });
   return child;
 }
 
-const causalMap = run('Causal Map', 'structured-analytic-causal-map', 'server.js');
-const timeline = run('Timeline', 'structured-analytic-timeline', 'server.js');
-const circleboarding = run('Circleboarding', 'structured-analytic-circleboarding', 'server.js');
-const multipleHypothesis = run('Multiple Hypothesis', 'structured-analytic-multiple-hypothesis-generation', 'server.js');
+hubServer.listen(HUB_PORT, () => {
+  SERVERS.forEach((s) => console.log(`${s.name} server: http://localhost:${s.port}`));
+  console.log('Press Ctrl+C to stop all.\n');
+});
+
+const children = SERVERS.filter((s) => s.dir).map((entry) => run(entry));
 
 process.on('SIGINT', () => {
-  causalMap.kill();
-  timeline.kill();
-  circleboarding.kill();
-  multipleHypothesis.kill();
+  children.forEach((c) => c && c.kill());
   hubServer.close();
   process.exit(0);
 });
 process.on('SIGTERM', () => {
-  causalMap.kill();
-  timeline.kill();
-  circleboarding.kill();
-  multipleHypothesis.kill();
+  children.forEach((c) => c && c.kill());
   hubServer.close();
   process.exit(0);
 });
-
-console.log('Causal Map, Timeline, Circleboarding, and Multiple Hypothesis started. Press Ctrl+C to stop all.\n');

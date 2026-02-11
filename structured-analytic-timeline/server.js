@@ -1,8 +1,8 @@
 /**
  * Optional local server for the Timeline app.
- * Serves static files and provides POST /api/save-indicators to write
- * indicators to ../structured-analytic-circleboarding/indicators.txt
- * (no save dialog when server is used). Always appends (>>), never overwrites.
+ * Serves static files and provides POST /api/save-indicators to append
+ * one JSON Lines (NDJSON) record to ../structured-analytic-circleboarding/hypothesis_keywords.jsonl.
+ * One "Generate Hypothesis Keywords" click = one line (append-only).
  *
  * Run: node server.js
  * Then open http://localhost:8080
@@ -14,13 +14,40 @@ const path = require("path");
 
 const PORT = 8080;
 const ROOT = __dirname;
-const INDICATORS_PATH = path.join(ROOT, "..", "structured-analytic-circleboarding", "indicators.txt");
+const JSONL_PATH = path.resolve(ROOT, "..", "structured-analytic-circleboarding", "hypothesis_keywords.jsonl");
+
+function toArray(val) {
+  if (Array.isArray(val)) return val.map((v) => String(v).trim()).filter(Boolean);
+  if (val == null) return [];
+  return [String(val).trim()].filter(Boolean);
+}
+
+function normalizeRecord(body) {
+  const createdAt = body && body.createdAt && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(String(body.createdAt))
+    ? String(body.createdAt)
+    : new Date().toISOString();
+  const record = {
+    createdAt,
+    what: toArray(body && body.what),
+    who: toArray(body && body.who),
+    when: toArray(body && body.when),
+    where: toArray(body && body.where),
+    why: toArray(body && body.why),
+    how: toArray(body && body.how)
+  };
+  if (body && body.id != null && String(body.id).trim() !== "") record.id = String(body.id).trim();
+  if (body && body.evidence != null && String(body.evidence).trim() !== "") record.evidence = String(body.evidence).trim();
+  if (body && body.sessionId != null && String(body.sessionId).trim() !== "") record.sessionId = String(body.sessionId).trim();
+  if (body && body.appVersion != null && String(body.appVersion).trim() !== "") record.appVersion = String(body.appVersion).trim();
+  return record;
+}
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8",
   ".js": "application/javascript; charset=utf-8",
   ".json": "application/json",
+  ".jsonl": "application/x-ndjson",
   ".png": "image/png",
   ".ico": "image/x-icon",
   ".txt": "text/plain; charset=utf-8"
@@ -48,28 +75,33 @@ function serveFile(filePath, res) {
 }
 
 const server = http.createServer((req, res) => {
-  if (req.method === "POST" && req.url === "/api/save-indicators") {
+  const urlPath = (req.url || "").split("?")[0].replace(/\/$/, "") || "/";
+  if (req.method === "POST" && urlPath === "/api/save-indicators") {
     const chunks = [];
     req.on("data", (chunk) => chunks.push(chunk));
     req.on("end", () => {
-      let body = Buffer.concat(chunks).toString("utf8");
-      const dir = path.dirname(INDICATORS_PATH);
+      let body;
+      try {
+        body = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+      } catch (e) {
+        send(res, 400, JSON.stringify({ ok: false, error: "Invalid JSON" }), "application/json");
+        return;
+      }
+      const record = normalizeRecord(body);
+      const line = JSON.stringify(record) + "\n";
+      const dir = path.dirname(JSONL_PATH);
       fs.mkdir(dir, { recursive: true }, (err) => {
         if (err) {
           send(res, 500, JSON.stringify({ ok: false, error: "Could not create directory" }), "application/json");
           return;
         }
-        fs.stat(INDICATORS_PATH, (errStat, st) => {
-          if (!errStat && st && st.size > 0 && body.length > 0) {
-            body = "\n" + body;
+        fs.appendFile(JSONL_PATH, line, "utf8", (writeErr) => {
+          if (writeErr) {
+            send(res, 500, JSON.stringify({ ok: false, error: String(writeErr.message) }), "application/json");
+            return;
           }
-          fs.appendFile(INDICATORS_PATH, body, "utf8", (err) => {
-            if (err) {
-              send(res, 500, JSON.stringify({ ok: false, error: String(err.message) }), "application/json");
-              return;
-            }
-            send(res, 200, JSON.stringify({ ok: true }), "application/json");
-          });
+          console.log("Appended hypothesis keywords to:", JSONL_PATH);
+          send(res, 200, JSON.stringify({ ok: true }), "application/json");
         });
       });
     });
@@ -81,9 +113,8 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  let urlPath = req.url.split("?")[0] || "/";
-  if (urlPath === "/") urlPath = "/index.html";
-  const safePath = urlPath.replace(/^\/+/, "").replace(/\.\./g, "");
+  const filePathFromUrl = urlPath === "/" ? "/index.html" : urlPath;
+  const safePath = filePathFromUrl.replace(/^\/+/, "").replace(/\.\./g, "");
   const filePath = path.resolve(ROOT, safePath || "index.html");
   if (!filePath.startsWith(ROOT)) {
     send(res, 403, "Forbidden", "text/plain");
@@ -94,5 +125,5 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, () => {
   console.log("Timeline server at http://localhost:" + PORT);
-  console.log("Indicators file: " + INDICATORS_PATH);
+  console.log("Hypothesis keywords (JSONL) will be written to:", JSONL_PATH);
 });

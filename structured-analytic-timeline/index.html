@@ -30,7 +30,7 @@
                 <button type="button" class="btn-zoom-in" id="btn-zoom-in" title="Zoom in">+</button>
                 <button type="button" class="btn-reset-view" id="btn-reset-view">Reset view</button>
               </div>
-              <button type="button" class="btn-indicators" id="btn-indicators-toolbar">Create new Indicators</button>
+              <button type="button" class="btn-indicators" id="btn-indicators-toolbar">Generate Hypothesis Keywords</button>
             </div>
           </header>
           <div class="timeline-scale-strip">
@@ -60,7 +60,7 @@
       </div>
       <div id="timeline-viewport" class="timeline-viewport">
         <div id="timeline-empty" class="timeline-empty" hidden>
-          <p>No events yet. Add one in the Add Event panel.</p>
+          <p>No evidence yet. Add one in the Add Evidence panel.</p>
         </div>
         <div id="timeline-world" class="timeline-world" hidden>
           <div id="timeline-horizontal" class="timeline-horizontal">
@@ -77,16 +77,16 @@
       </div>
     </section>
 
-    <div class="floating-panel" id="panel-add-event" data-panel-id="add-event" aria-label="Create New Event">
+    <div class="floating-panel" id="panel-add-event" data-panel-id="add-event" aria-label="Create New Evidence">
       <div class="panel-drag-handle" id="panel-add-event-handle">
-        <h2 class="panel-title" id="form-title">Create New Event</h2>
+        <h2 class="panel-title" id="form-title">Create New Evidence</h2>
         <button type="button" class="btn-panel-hide" id="btn-hide-add-event" aria-label="Hide panel">−</button>
       </div>
       <div class="panel-body">
         <form id="event-form" novalidate>
           <div class="field">
             <label for="event-name">Name <span class="required">*</span></label>
-            <input type="text" id="event-name" name="name" autocomplete="off" placeholder="Event name">
+            <input type="text" id="event-name" name="name" autocomplete="off" placeholder="Evidence name">
             <span class="error" id="error-name" aria-live="polite"></span>
           </div>
           <div class="field">
@@ -111,35 +111,39 @@
               <span class="error" id="error-time" aria-live="polite"></span>
             </div>
           </div>
-          <button type="submit" class="btn-submit" id="btn-submit">Add event</button>
+          <label class="evidence-row">
+            <input type="checkbox" id="event-evidence" aria-describedby="event-evidence-desc">
+            <span id="event-evidence-desc">Use as Evidence?</span>
+          </label>
+          <button type="submit" class="btn-submit" id="btn-submit">Add evidence</button>
           <button type="button" class="btn-cancel" id="btn-cancel" hidden>Cancel</button>
         </form>
       </div>
       <div class="resize-handle" id="panel-add-event-resize" aria-label="Resize"></div>
     </div>
-    <div class="floating-panel" id="panel-events" data-panel-id="events" aria-label="Events list">
+    <div class="floating-panel" id="panel-events" data-panel-id="events" aria-label="Evidence list">
       <div class="panel-drag-handle" id="panel-events-handle">
-        <h2 class="panel-title">Events</h2>
+        <h2 class="panel-title">Evidence</h2>
         <button type="button" class="btn-panel-hide" id="btn-hide-events" aria-label="Hide panel">×</button>
       </div>
       <div class="panel-body">
         <div id="events-list-summary" class="events-list-summary" aria-live="polite"></div>
-        <div id="events-list" class="events-list" aria-label="Event list"></div>
+        <div id="events-list" class="events-list" aria-label="Evidence list"></div>
       </div>
       <div class="resize-handle" id="panel-events-resize" aria-label="Resize"></div>
     </div>
-    <div class="floating-panel" id="panel-details" data-panel-id="details" aria-label="Event details">
+    <div class="floating-panel" id="panel-details" data-panel-id="details" aria-label="Evidence details">
       <div class="panel-drag-handle" id="panel-details-handle">
-        <h2 class="panel-title">Event Details</h2>
+        <h2 class="panel-title">Evidence Details</h2>
         <button type="button" class="btn-panel-hide" id="btn-hide-details" aria-label="Hide panel">−</button>
       </div>
       <div class="panel-body event-details-body">
+        <div class="event-details-actions event-details-actions-top">
+          <button type="button" class="btn-indicators btn-indicators-small" id="btn-indicators-details">Generate Hypothesis Keywords</button>
+        </div>
         <button type="button" class="event-details-close" id="event-details-close" aria-label="Clear selection">×</button>
         <div id="event-details-content" class="event-details-content">
-          <p class="event-details-placeholder">Empty state — click an event on the timeline or in the Events list to view details.</p>
-        </div>
-        <div class="event-details-actions">
-          <button type="button" class="btn-indicators" id="btn-indicators-details">Create new Indicators</button>
+          <p class="event-details-placeholder">Empty state — click evidence on the timeline or in the Evidence list to view details.</p>
         </div>
       </div>
       <div class="resize-handle" id="panel-details-resize" aria-label="Resize"></div>
@@ -149,29 +153,29 @@
     <div class="layouts-dropdown overlay-dropdown" id="layouts-dropdown" role="menu" hidden>
       <div class="layouts-menu-item" role="menuitemcheckbox" aria-checked="true" id="layouts-toggle-add-event" tabindex="0">
         <input type="checkbox" id="layouts-check-add-event" checked aria-hidden="true">
-        <label for="layouts-check-add-event">Show Add Event</label>
+        <label for="layouts-check-add-event">Show Add Evidence</label>
       </div>
       <div class="layouts-menu-item" role="menuitemcheckbox" aria-checked="true" id="layouts-toggle-events" tabindex="0">
         <input type="checkbox" id="layouts-check-events" checked aria-hidden="true">
-        <label for="layouts-check-events">Show Events</label>
+        <label for="layouts-check-events">Show Evidence</label>
       </div>
       <div class="layouts-menu-item" role="menuitemcheckbox" aria-checked="true" id="layouts-toggle-details" tabindex="0">
         <input type="checkbox" id="layouts-check-details" checked aria-hidden="true">
-        <label for="layouts-check-details">Show Event Details</label>
+        <label for="layouts-check-details">Show Evidence Details</label>
       </div>
     </div>
     <div class="file-dropdown overlay-dropdown" id="file-dropdown" role="menu" hidden>
-      <button type="button" class="file-menu-item" id="file-import-events" role="menuitem">Import Events</button>
-      <button type="button" class="file-menu-item" id="file-export-events" role="menuitem">Export Events</button>
+      <button type="button" class="file-menu-item" id="file-import-events" role="menuitem">Import Evidence</button>
+      <button type="button" class="file-menu-item" id="file-export-events" role="menuitem">Export Evidence</button>
       <button type="button" class="file-menu-item" id="file-download-template" role="menuitem">Download JSON Template</button>
-      <button type="button" class="file-menu-item file-menu-item-danger" id="file-remove-all" role="menuitem">Remove all Events</button>
+      <button type="button" class="file-menu-item file-menu-item-danger" id="file-remove-all" role="menuitem">Remove all Evidence</button>
     </div>
     <input type="file" id="json-file-input" accept=".json,application/json" hidden>
     <div class="indicators-overlay" id="indicators-overlay" hidden>
       <div class="indicators-backdrop" id="indicators-backdrop"></div>
       <div class="indicators-modal" id="indicators-modal" role="dialog" aria-labelledby="indicators-modal-title" aria-modal="true">
         <div class="indicators-modal-header">
-          <h2 class="indicators-modal-title" id="indicators-modal-title">Create Indicators</h2>
+          <h2 class="indicators-modal-title" id="indicators-modal-title">Generate Hypothesis Keywords</h2>
           <button type="button" class="indicators-modal-close" id="indicators-modal-close" aria-label="Close">×</button>
         </div>
         <p class="indicators-hint">Fill one or more fields (comma-separated for multiple). Not all are required.</p>
@@ -232,7 +236,7 @@
           </div>
         </div>
         <div class="indicators-modal-actions">
-          <button type="button" class="btn-indicators-primary" id="indicators-btn-create">Create Indicators</button>
+          <button type="button" class="btn-indicators-primary" id="indicators-btn-create">Generate Hypothesis Keywords</button>
           <button type="button" class="indicators-btn-cancel" id="indicators-btn-cancel">Cancel</button>
         </div>
       </div>

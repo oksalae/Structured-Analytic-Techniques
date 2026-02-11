@@ -624,6 +624,24 @@
       outline: none;
       border-color: #2563eb;
     }
+    .comment-evidence-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 12px 0 0;
+      cursor: pointer;
+      font-size: 13px;
+      color: #b0b4bc;
+    }
+    .comment-evidence-row input[type="checkbox"] {
+      cursor: pointer;
+      accent-color: #3d5a80;
+      width: 18px;
+      height: 18px;
+    }
+    .comment-evidence-row span {
+      color: #e4e6eb;
+    }
     #comment-btn-keywords {
       padding: 10px 14px;
       border-radius: 6px;
@@ -815,7 +833,7 @@
     </div>
     <div id="toolbar-title">Causal Map for Structured Analytic Techniques</div>
     <div id="toolbar-right">
-      <button type="button" id="btn-keywords" class="toolbar-menu-btn btn-keywords">Create new Indicators</button>
+      <button type="button" id="btn-keywords" class="toolbar-menu-btn btn-keywords">Generate Hypothesis Keywords</button>
     </div>
     <input type="file" id="file-import" accept=".json,application/json">
   </div>
@@ -923,8 +941,12 @@
         <input type="text" id="comment-date" placeholder="YYYY-MM-DD">
         <label for="comment-time">Time</label>
         <input type="text" id="comment-time" placeholder="HH:MM">
+        <label class="comment-evidence-row">
+          <input type="checkbox" id="comment-evidence" aria-describedby="comment-evidence-desc">
+          <span id="comment-evidence-desc">Use as Evidence?</span>
+        </label>
         <div id="comment-actions-row">
-          <button type="button" id="comment-btn-keywords" class="btn-keywords">Create new Indicators</button>
+          <button type="button" id="comment-btn-keywords" class="btn-keywords">Generate Hypothesis Keywords</button>
           <button type="button" id="comment-save-close" class="comment-save-close">Save and Close</button>
         </div>
       </div>
@@ -997,6 +1019,7 @@
       id: generateId(),
       name: name || 'Unnamed',
       depth: depth,
+      evidence: '',
       children: Array.isArray(children) ? children : []
     };
     if (side && SIDES.includes(side)) node.side = side;
@@ -1860,6 +1883,7 @@
   const commentSourceEl = document.getElementById('comment-source');
   const commentDateEl = document.getElementById('comment-date');
   const commentTimeEl = document.getElementById('comment-time');
+  const commentEvidenceEl = document.getElementById('comment-evidence');
   let commentPopupNode = null;
 
   function persistCommentToNode(node) {
@@ -1868,10 +1892,12 @@
     const src = (commentSourceEl.value && commentSourceEl.value.trim()) ? commentSourceEl.value.trim() : '';
     const dt = (commentDateEl.value && commentDateEl.value.trim()) ? commentDateEl.value.trim() : '';
     const tm = (commentTimeEl.value && commentTimeEl.value.trim()) ? commentTimeEl.value.trim() : '';
+    const evidence = commentEvidenceEl && commentEvidenceEl.checked ? 'Yes' : '';
     if (desc) node.description = desc; else delete node.description;
     if (src) node.source = src; else delete node.source;
     if (dt) node.date = dt; else delete node.date;
     if (tm) node.time = tm; else delete node.time;
+    node.evidence = evidence;
     saveTree();
   }
 
@@ -1885,6 +1911,7 @@
     commentSourceEl.value = node.source || '';
     commentDateEl.value = node.date || '';
     commentTimeEl.value = node.time || '';
+    if (commentEvidenceEl) commentEvidenceEl.checked = node.evidence === 'Yes';
     commentOverlay.classList.add('visible');
     commentDescriptionEl.focus();
   }
@@ -1961,6 +1988,18 @@
       lines.push('');
     });
     return lines.join('\n').trimEnd() || 'No indicators yet.';
+  }
+
+  function formDataToRecord(fromForm) {
+    return {
+      createdAt: new Date().toISOString(),
+      what: (fromForm.What || []).slice(),
+      who: (fromForm.Who || []).slice(),
+      when: (fromForm.When || []).slice(),
+      where: (fromForm.Where || []).slice(),
+      why: (fromForm.Why || []).slice(),
+      how: (fromForm.How || []).slice()
+    };
   }
 
   const keywordsOverlay = document.getElementById('keywords-overlay');
@@ -2071,21 +2110,29 @@
       (fromForm[entity] || []).forEach((v) => data[entity].push(v));
     });
     saveKeywordsToStorage(data);
-    const text = buildKeywordsTextFile(data);
-    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-    const filename = 'Indicators.txt';
+    const record = formDataToRecord(fromForm);
+    const line = JSON.stringify(record) + '\n';
+    const filename = 'hypothesis_keywords.jsonl';
     try {
-      const r = await fetch('/api/save-indicators', { method: 'POST', body: text, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+      const r = await fetch('/api/save-indicators', {
+        method: 'POST',
+        body: JSON.stringify(record),
+        headers: { 'Content-Type': 'application/json' }
+      });
       if (r.ok) {
         resetKeywordEntitiesToSingleRow();
         return;
       }
     } catch (_) {}
+    const blob = new Blob([line], { type: 'application/x-ndjson; charset=utf-8' });
     if (typeof window.showSaveFilePicker === 'function') {
       try {
-        const handle = await window.showSaveFilePicker({ suggestedName: filename, types: [{ description: 'Text file', accept: { 'text/plain': ['.txt'] } }] });
+        const handle = await window.showSaveFilePicker({
+          suggestedName: filename,
+          types: [{ description: 'JSON Lines', accept: { 'application/x-ndjson': ['.jsonl'], 'text/plain': ['.jsonl'] } }]
+        });
         const writable = await handle.createWritable();
-        await writable.write(text);
+        await writable.write(blob);
         await writable.close();
       } catch (err) {
         if (err.name !== 'AbortError') {
@@ -2148,6 +2195,7 @@
   function ensureIds(node, isRoot, depth = 0) {
     if (!node.id) node.id = generateId();
     node.name = node.name != null ? node.name : (node.label != null ? node.label : 'Unnamed');
+    if (node.evidence !== 'Yes') node.evidence = '';
     if (!Array.isArray(node.children)) node.children = [];
     node.depth = isRoot ? 0 : depth;
     const asRoot = isRoot === true;
@@ -2162,6 +2210,7 @@
     if (key === 'description' || key === 'source' || key === 'date' || key === 'time') {
       if (value == null || value === '') return undefined;
     }
+    if (key === 'evidence') return value === 'Yes' ? 'Yes' : '';
     return value;
   }
 
@@ -2188,8 +2237,14 @@
     node.children.forEach((c) => ensureDepths(c, depth + 1));
   }
 
+  function ensureEvidence(node) {
+    node.evidence = node.evidence === 'Yes' ? 'Yes' : '';
+    node.children.forEach(ensureEvidence);
+  }
+
   function doExport() {
     ensureDepths(tree, 0);
+    ensureEvidence(tree);
     const json = JSON.stringify(tree, treeReplacer, 2);
     const blob = new Blob([json], { type: 'application/json' });
     const a = document.createElement('a');

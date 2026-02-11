@@ -51,6 +51,8 @@ Displays the fields for **Description** and **Source** that can be attached to a
 
 ## 🚀 Quick start
 
+**From repo root:** Run `node start-all.js` and open the hub at http://localhost:3000, then click **Causal Map** (port 8765).
+
 ### Option 1: Open directly  
 1. Clone or download the repository  
 2. Open `index.html` in your browser

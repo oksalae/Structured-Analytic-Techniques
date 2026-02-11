@@ -334,6 +334,7 @@ body {
 .btn-ranking-cancel:hover {
   border-color: #95a5a6;
   background: #f5f4f2;
+  color: #1a1a1a;
 }
 
 .btn-ranking-remove {
@@ -805,6 +806,7 @@ body {
 .btn-clear-tree:hover {
   border-color: #a93226;
   background: #fdf5f5;
+  color: #1a1a1a;
 }
 
 .btn-update-tree:hover {

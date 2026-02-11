@@ -5,7 +5,7 @@
   const CATEGORY_KEYS = ['who', 'what', 'why', 'when', 'where', 'how'];
   const LANE_ORDER = ['who', 'what', 'why', 'when', 'where', 'how'];
   var CIRCLEBOARD_DATA_FILE = 'CircleboardData.txt';
-  var INDICATORS_FILE = 'Indicators.txt';
+  var INDICATORS_FILE = 'hypothesis_keywords.jsonl';
 
   function genId() {
     return 'id-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
@@ -113,6 +113,31 @@
     return parseMarkdownLike(text);
   }
 
+  /** Parse JSONL file: one JSON object per line. Aggregates all records into one object with who/what/when/where/why/how as string arrays. */
+  function parseJsonlIndicators(text) {
+    var out = { who: [], what: [], when: [], where: [], why: [], how: [] };
+    if (!text || typeof text !== 'string') return out;
+    var lines = text.split(/\r?\n/).filter(function (line) { return line.trim() !== ''; });
+    lines.forEach(function (line) {
+      try {
+        var record = JSON.parse(line);
+        var what = Array.isArray(record.what) ? record.what : [];
+        var who = Array.isArray(record.who) ? record.who : [];
+        var when = Array.isArray(record.when) ? record.when : [];
+        var where = Array.isArray(record.where) ? record.where : [];
+        var why = Array.isArray(record.why) ? record.why : [];
+        var how = Array.isArray(record.how) ? record.how : [];
+        what.forEach(function (s) { if (typeof s === 'string' && s.trim()) out.what.push(s.trim()); });
+        who.forEach(function (s) { if (typeof s === 'string' && s.trim()) out.who.push(s.trim()); });
+        when.forEach(function (s) { if (typeof s === 'string' && s.trim()) out.when.push(s.trim()); });
+        where.forEach(function (s) { if (typeof s === 'string' && s.trim()) out.where.push(s.trim()); });
+        why.forEach(function (s) { if (typeof s === 'string' && s.trim()) out.why.push(s.trim()); });
+        how.forEach(function (s) { if (typeof s === 'string' && s.trim()) out.how.push(s.trim()); });
+      } catch (e) { /* skip invalid line */ }
+    });
+    return out;
+  }
+
   function loadFromStorage() {
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
@@ -160,7 +185,7 @@
     }).catch(callback);
   }
 
-  /** Merge items from Indicators.txt into current state: append new items (by text) per category. soWhatLanes and trashLanes unchanged. */
+  /** Merge items from hypothesis_keywords.jsonl into current state: append new items (by text) per category. soWhatLanes and trashLanes unchanged. */
   function mergeIndicatorsIntoState(currentState, parsedIndicators) {
     var state = {
       who: (currentState.who || []).slice(),
@@ -749,17 +774,17 @@
     fetch(INDICATORS_FILE)
       .then(function (r) { return r.ok ? r.text() : Promise.reject(new Error('Not found')); })
       .then(function (text) {
-        var parsed = parseIndicators(text);
+        var parsed = parseJsonlIndicators(text);
         var current = getStateFromDOM();
         var merged = mergeIndicatorsIntoState(current, parsed);
         doSave(merged);
         render(merged);
       })
       .catch(function () {
-        if (btn) { btn.disabled = false; btn.textContent = 'Refresh from Indicators.txt'; }
+        if (btn) { btn.disabled = false; btn.textContent = 'Refresh from hypothesis_keywords.jsonl'; }
       })
       .then(function () {
-        if (btn) { btn.disabled = false; btn.textContent = 'Refresh from Indicators.txt'; }
+        if (btn) { btn.disabled = false; btn.textContent = 'Refresh from hypothesis_keywords.jsonl'; }
       });
   };
 
@@ -798,9 +823,9 @@
       })
       .catch(function () {
         return fetch(INDICATORS_FILE)
-          .then(function (r) { return r.ok ? r.text() : Promise.reject(new Error('No Indicators.txt')); })
+          .then(function (r) { return r.ok ? r.text() : Promise.reject(new Error('No hypothesis_keywords.jsonl')); })
           .then(function (text) {
-            var parsed = parseIndicators(text);
+            var parsed = parseJsonlIndicators(text);
             useState(parsed);
           });
       })

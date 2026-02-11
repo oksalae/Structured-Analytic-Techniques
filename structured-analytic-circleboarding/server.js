@@ -1,6 +1,6 @@
 /**
  * Optional local server for the Circleboarding app.
- * Serves static files so the app can load Indicators.txt via fetch.
+ * Serves static files so the app can load hypothesis_keywords.txt via fetch.
  *
  * Run: node server.js
  * Then open http://localhost:8082

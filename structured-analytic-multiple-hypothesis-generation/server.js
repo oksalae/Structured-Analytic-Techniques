@@ -14,6 +14,34 @@ const PORT = 8083;
 const ROOT = __dirname;
 const SOURCE_FILE = path.join(ROOT, "Multiple_Hypothesis_Generation.txt");
 const HYPOTHESES_FILE = path.join(ROOT, "Hypotheses.txt");
+const JSONL_PATH = path.resolve(ROOT, "..", "structured-analytic-circleboarding", "hypothesis_keywords.jsonl");
+
+function toArray(val) {
+  if (Array.isArray(val)) return val.map((v) => String(v).trim()).filter(Boolean);
+  if (val == null) return [];
+  return [String(val).trim()].filter(Boolean);
+}
+
+function normalizeIndicatorsRecord(body) {
+  const createdAt =
+    body && body.createdAt && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(String(body.createdAt))
+      ? String(body.createdAt)
+      : new Date().toISOString();
+  const record = {
+    createdAt,
+    what: toArray(body && body.what),
+    who: toArray(body && body.who),
+    when: toArray(body && body.when),
+    where: toArray(body && body.where),
+    why: toArray(body && body.why),
+    how: toArray(body && body.how)
+  };
+  if (body && body.id != null && String(body.id).trim() !== "") record.id = String(body.id).trim();
+  if (body && body.evidence != null && String(body.evidence).trim() !== "") record.evidence = String(body.evidence).trim();
+  if (body && body.sessionId != null && String(body.sessionId).trim() !== "") record.sessionId = String(body.sessionId).trim();
+  if (body && body.appVersion != null && String(body.appVersion).trim() !== "") record.appVersion = String(body.appVersion).trim();
+  return record;
+}
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -32,7 +60,7 @@ function send(res, statusCode, body, contentType) {
 }
 
 const server = http.createServer((req, res) => {
-  const urlPath = (req.url || "/").split("?")[0];
+  const urlPath = (req.url || "/").split("?")[0].replace(/\/$/, "") || "/";
 
   if (req.method === "POST" && urlPath === "/api/add-source") {
     const chunks = [];
@@ -242,4 +270,5 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, () => {
   console.log("Multiple Hypothesis Generation: http://localhost:" + PORT);
+  console.log("Hypothesis keywords (JSONL) will be written to:", JSONL_PATH);
 });

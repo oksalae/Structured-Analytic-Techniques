@@ -17,11 +17,13 @@ A lightweight, browser-based timeline tool for **Structured Analytic Techniques 
 - Zoom in/out to support analysis at different levels of detail
 - Manage UI panels from **Layouts** (show/hide + reset layouts)
 - Import/export events as **JSON** from **File**
-- **Create new Indicators** (What / Who / When / Where / Why / How) from the toolbar or Event Details panel; export to `Indicators.txt` or save via optional server
+- **Generate Hypothesis Keywords** (What / Who / When / Where / Why / How) from the toolbar or Evidence Details panel; append one JSON Lines (NDJSON) record to `hypothesis_keywords.jsonl` via optional server, or download one line as `.jsonl`
 
 ---
 
 ## Quick start
+
+**From repo root:** Run `node start-all.js` and open the hub at http://localhost:3000, then click **Timeline** (port 8080).
 
 ### Run locally (Option 1: simplest)
 1. Clone or download the repo  
@@ -30,7 +32,7 @@ A lightweight, browser-based timeline tool for **Structured Analytic Techniques 
 ### Run locally (Option 2: local server)
 Some browsers restrict certain features when opening files directly. If you run into issues, start a simple local server:
 
-- **Node** (includes `POST /api/save-indicators` to write indicators to `../structured-analytic-circleboarding/indicators.txt` without a save dialog):
+- **Node** (includes `POST /api/save-indicators` to append one JSON Lines record to `../structured-analytic-circleboarding/hypothesis_keywords.jsonl` per click, no save dialog):
   ```bash
   node server.js
   ```
@@ -78,8 +80,8 @@ Use **File** to:
 - **Download JSON Template**
 - **Remove all Events** (start from a blank timeline)
 
-### 5) Create Indicators
-Click **Create new Indicators** (toolbar or Event Details panel) to open the Indicators popup. Fill one or more of What? / Who? / When? / Where? / Why? / How? (comma-separated for multiple). Click **Create Indicators** to append to the stored list and export. With `node server.js`, indicators are written to `../structured-analytic-circleboarding/indicators.txt`; otherwise the browser offers a save dialog or download.
+### 5) Generate Hypothesis Keywords
+Click **Generate Hypothesis Keywords** (toolbar or Evidence Details panel) to open the popup. Fill one or more of What? / Who? / When? / Where? / Why? / How? (comma-separated for multiple). Click **Generate Hypothesis Keywords** to store in the app and write one record. With `node server.js`, one JSON Lines (NDJSON) record is appended to `../structured-analytic-circleboarding/hypothesis_keywords.jsonl` (one line per click; schema: `createdAt`, `what`, `who`, `when`, `where`, `why`, `how` as arrays). Without the server, the browser offers to download that single record as `hypothesis_keywords.jsonl`.
 
 ---
 

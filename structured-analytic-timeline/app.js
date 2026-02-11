@@ -2,6 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "timeline-events";
+  const TREE_STORAGE_KEY = "timeline-tree";
   const INDICATORS_STORAGE_KEY = "indicators_store";
   const INDICATORS_ENTITIES = ["What", "Who", "When", "Where", "Why", "How"];
   const INDICATORS_PLACEHOLDERS = {
@@ -19,6 +20,7 @@
   const sourceInput = document.getElementById("event-source");
   const dateInput = document.getElementById("event-date");
   const timeInput = document.getElementById("event-time");
+  const evidenceInput = document.getElementById("event-evidence");
   const timelineHorizontal = document.getElementById("timeline-horizontal");
   const timelineCallouts = document.getElementById("timeline-callouts");
   const timelineLine = document.getElementById("timeline-line");
@@ -184,6 +186,84 @@
 
   function saveEvents(events) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
+  }
+
+  function loadTree() {
+    try {
+      var raw = localStorage.getItem(TREE_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function saveTree(tree) {
+    if (tree != null) localStorage.setItem(TREE_STORAGE_KEY, JSON.stringify(tree));
+    else localStorage.removeItem(TREE_STORAGE_KEY);
+  }
+
+  function flattenTreeToEvents(root) {
+    if (!root || typeof root !== "object") return [];
+    var events = [];
+    function walk(node) {
+      var dateStr = node && (node.date != null && node.date !== "") ? String(node.date).trim() : "";
+      var timeStr = node && (node.time != null && node.time !== "") ? String(node.time).trim() : "";
+      if (dateStr && timeStr) {
+        if (timeStr.length === 4) timeStr = "0" + timeStr;
+        var combined = dateStr.indexOf("T") >= 0 ? dateStr : dateStr + "T" + (timeStr.length <= 5 ? timeStr + ":00" : timeStr);
+        var d = new Date(combined);
+        if (!Number.isNaN(d.getTime())) {
+          events.push({
+            id: node.id || generateId(),
+            name: (node.name != null ? String(node.name) : "").trim(),
+            description: (node.description != null ? String(node.description) : "").trim(),
+            source: node.source != null && node.source !== "" ? String(node.source).trim() : undefined,
+            time: d.toISOString(),
+            evidence: node.evidence === "Yes" ? "Yes" : ""
+          });
+        }
+      }
+      var children = node && Array.isArray(node.children) ? node.children : [];
+      children.forEach(walk);
+    }
+    walk(root);
+    return events;
+  }
+
+  function applyEventToTreeNode(node, evt) {
+    if (!node || !evt) return;
+    if (node.id === evt.id) {
+      node.name = evt.name != null ? evt.name : node.name;
+      node.description = evt.description != null ? evt.description : node.description;
+      node.source = evt.source !== undefined ? evt.source : node.source;
+      node.evidence = evt.evidence === "Yes" ? "Yes" : "";
+      var d = new Date(evt.time || 0);
+      if (!Number.isNaN(d.getTime())) {
+        var pad = function (n) { return n < 10 ? "0" + n : n; };
+        node.date = d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+        node.time = pad(d.getHours()) + ":" + pad(d.getMinutes());
+      }
+      return true;
+    }
+    var children = Array.isArray(node.children) ? node.children : [];
+    for (var i = 0; i < children.length; i++) {
+      if (applyEventToTreeNode(children[i], evt)) return true;
+    }
+    return false;
+  }
+
+  function removeNodeFromTree(root, id) {
+    if (!root) return false;
+    if (root.id === id) return true;
+    var children = Array.isArray(root.children) ? root.children : [];
+    for (var i = 0; i < children.length; i++) {
+      if (children[i].id === id) {
+        children.splice(i, 1);
+        return true;
+      }
+      if (removeNodeFromTree(children[i], id)) return true;
+    }
+    return false;
   }
 
   function clearFieldErrors() {
@@ -583,7 +663,7 @@
       var dot = document.createElement("div");
       dot.className = "marker-dot";
       dot.setAttribute("data-id", evt.id);
-      dot.setAttribute("title", "Event " + displayIndex);
+      dot.setAttribute("title", "Evidence " + displayIndex);
       dot.style.left = pct + "%";
       dot.innerHTML = '<span class="marker-dot-number">' + displayIndex + "</span>";
       timelineLineBar.appendChild(dot);
@@ -1015,7 +1095,7 @@
     var summaryEl = document.getElementById("events-list-summary");
     if (summaryEl) {
       if (totalCount === 0) summaryEl.textContent = "";
-      else if (visibleEvents.length === totalCount) summaryEl.textContent = "Showing " + totalCount + " events";
+      else if (visibleEvents.length === totalCount) summaryEl.textContent = "Showing " + totalCount + " evidence";
       else summaryEl.textContent = "Showing " + visibleEvents.length + " of " + totalCount;
     }
     visibleEvents = visibleEvents || [];
@@ -1042,20 +1122,20 @@
   function hideDetailsPanel() {
     activeEventId = null;
     if (eventDetailsContent) {
-      eventDetailsContent.innerHTML = "<p class=\"event-details-placeholder\">Empty state — click an event on the timeline or in the Events list to view details.</p>";
+      eventDetailsContent.innerHTML = "<p class=\"event-details-placeholder\">Empty state — click evidence on the timeline or in the Evidence list to view details.</p>";
     }
   }
 
   function renderDetailsPanel() {
     if (!eventDetailsContent) return;
     if (!activeEventId) {
-      eventDetailsContent.innerHTML = "<p class=\"event-details-placeholder\">Empty state — click an event on the timeline or in the Events list to view details.</p>";
+      eventDetailsContent.innerHTML = "<p class=\"event-details-placeholder\">Empty state — click evidence on the timeline or in the Evidence list to view details.</p>";
       return;
     }
     var events = loadEvents();
     var evt = events.find(function (e) { return e.id === activeEventId; });
     if (!evt) {
-      eventDetailsContent.innerHTML = "<p class=\"event-details-placeholder\">Event not found.</p>";
+      eventDetailsContent.innerHTML = "<p class=\"event-details-placeholder\">Evidence not found.</p>";
       return;
     }
     var displayIndex = getDisplayIndexForId(activeEventId);
@@ -1063,12 +1143,33 @@
       ? '<p class="event-details-source"><a href="' + escapeHtml(evt.source) + '" target="_blank" rel="noopener noreferrer">Source</a></p>'
       : "";
     var dateTimeHtml = '<p class="event-details-datetime">' + escapeHtml(formatDisplayTime(evt.time || "")) + "</p>";
+    var evidenceChecked = evt.evidence === "Yes";
+    var evidenceHtml = '<label class="evidence-row event-details-evidence-row">' +
+      '<input type="checkbox" id="details-evidence" aria-describedby="details-evidence-desc" ' + (evidenceChecked ? "checked" : "") + '>' +
+      '<span id="details-evidence-desc">Use as Evidence?</span></label>';
     eventDetailsContent.innerHTML =
       '<p class="event-details-number"><span class="event-details-badge">' + (displayIndex != null ? displayIndex : "—") + "</span></p>" +
       '<h3 class="event-details-name">' + escapeHtml(evt.name || "") + "</h3>" +
       dateTimeHtml +
       '<div class="event-details-description">' + escapeHtml(evt.description || "") + "</div>" +
-      sourceHtml;
+      sourceHtml +
+      evidenceHtml;
+    var detailsEvidenceCheckbox = document.getElementById("details-evidence");
+    if (detailsEvidenceCheckbox) {
+      detailsEvidenceCheckbox.addEventListener("change", function () {
+        var events = loadEvents();
+        var eventToUpdate = events.find(function (e) { return e.id === activeEventId; });
+        if (eventToUpdate) {
+          eventToUpdate.evidence = detailsEvidenceCheckbox.checked ? "Yes" : "";
+          saveEvents(events);
+          var tree = loadTree();
+          if (tree) {
+            applyEventToTreeNode(tree, eventToUpdate);
+            saveTree(tree);
+          }
+        }
+      });
+    }
   }
 
   function startEdit(id) {
@@ -1081,9 +1182,10 @@
     if (sourceInput) sourceInput.value = evt.source || "";
     if (dateInput) dateInput.value = isoToDateInput(evt.time || "");
     if (timeInput) timeInput.value = isoToTimeInput(evt.time || "");
+    if (evidenceInput) evidenceInput.checked = (evt.evidence === "Yes");
     clearFieldErrors();
-    formTitle.textContent = "Edit event";
-    btnSubmit.textContent = "Update event";
+    formTitle.textContent = "Edit evidence";
+    btnSubmit.textContent = "Update evidence";
     btnCancel.hidden = false;
     form.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
@@ -1095,16 +1197,22 @@
     if (sourceInput) sourceInput.value = "";
     if (dateInput) dateInput.value = "";
     if (timeInput) timeInput.value = "";
+    if (evidenceInput) evidenceInput.checked = false;
     clearFieldErrors();
-    formTitle.textContent = "Create New Event";
-    btnSubmit.textContent = "Add event";
+    formTitle.textContent = "Create New Evidence";
+    btnSubmit.textContent = "Add evidence";
     btnCancel.hidden = true;
   }
 
   function deleteEvent(id) {
-    if (!confirm("Delete this event?")) return;
+    if (!confirm("Delete this evidence?")) return;
     var events = loadEvents().filter(function (e) { return e.id !== id; });
     saveEvents(events);
+    var tree = loadTree();
+    if (tree) {
+      removeNodeFromTree(tree, id);
+      saveTree(tree);
+    }
     if (editingId === id) cancelEdit();
     if (activeEventId === id) hideDetailsPanel();
     renderTimeline();
@@ -1228,11 +1336,26 @@
     return lines.join("\n").replace(/\n+$/, "");
   }
 
-  function persistIndicatorsToFile(text, done) {
+  function formDataToRecord(formData) {
+    var id = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : ("id-" + Date.now() + "-" + Math.random().toString(36).slice(2, 11));
+    return {
+      id: id,
+      createdAt: new Date().toISOString(),
+      what: (formData.What || []).slice(),
+      who: (formData.Who || []).slice(),
+      when: (formData.When || []).slice(),
+      where: (formData.Where || []).slice(),
+      why: (formData.Why || []).slice(),
+      how: (formData.How || []).slice()
+    };
+  }
+
+  function persistIndicatorsToFile(record, done) {
+    var line = JSON.stringify(record) + "\n";
     function fallback() {
-      var blob = new Blob([text], { type: "text/plain; charset=utf-8" });
+      var blob = new Blob([line], { type: "application/x-ndjson; charset=utf-8" });
       if (typeof window !== "undefined" && window.showSaveFilePicker) {
-        window.showSaveFilePicker({ suggestedName: "Indicators.txt", types: [{ description: "Text file", accept: { "text/plain": [".txt"] } }] })
+        window.showSaveFilePicker({ suggestedName: "hypothesis_keywords.jsonl", types: [{ description: "JSON Lines", accept: { "application/x-ndjson": [".jsonl"], "text/plain": [".jsonl"] } }] })
           .then(function (handle) {
             return handle.createWritable();
           })
@@ -1244,7 +1367,7 @@
             var url = URL.createObjectURL(blob);
             var a = document.createElement("a");
             a.href = url;
-            a.download = "Indicators.txt";
+            a.download = "hypothesis_keywords.jsonl";
             a.click();
             URL.revokeObjectURL(url);
             if (done) done();
@@ -1253,7 +1376,7 @@
         var url = URL.createObjectURL(blob);
         var a = document.createElement("a");
         a.href = url;
-        a.download = "Indicators.txt";
+        a.download = "hypothesis_keywords.jsonl";
         a.click();
         URL.revokeObjectURL(url);
         if (done) done();
@@ -1261,8 +1384,8 @@
     }
     fetch("/api/save-indicators", {
       method: "POST",
-      headers: { "Content-Type": "text/plain; charset=utf-8" },
-      body: text
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(record)
     }).then(function (res) {
       if (res.ok) {
         if (done) done();
@@ -1284,10 +1407,8 @@
     });
     saveIndicatorsStore(store);
     closeIndicatorsPopup();
-    var batchText = buildIndicatorsText(formData);
-    if (batchText && batchText !== "No indicators yet.") {
-      persistIndicatorsToFile(batchText);
-    }
+    var record = formDataToRecord(formData);
+    persistIndicatorsToFile(record);
     resetIndicatorsForm();
   }
 
@@ -1337,20 +1458,45 @@
           description: data.description,
           source: data.source !== undefined ? data.source : existing.source,
           time: data.time,
-          dragOffset: existing.dragOffset
+          dragOffset: existing.dragOffset,
+          evidence: evidenceInput && evidenceInput.checked ? "Yes" : ""
         };
         saveEvents(events);
+        var tree = loadTree();
+        if (tree) applyEventToTreeNode(tree, events[idx]);
+        if (tree) saveTree(tree);
         cancelEdit();
       }
     } else {
+      var newId = generateId();
       var newEvent = {
-        id: generateId(),
+        id: newId,
         name: data.name,
         description: data.description,
-        time: data.time
+        source: data.source,
+        time: data.time,
+        evidence: evidenceInput && evidenceInput.checked ? "Yes" : ""
       };
       events.push(newEvent);
       saveEvents(events);
+      var tree = loadTree();
+      if (tree && Array.isArray(tree.children)) {
+        var pad2 = function (n) { return n < 10 ? "0" + n : String(n); };
+        var d = new Date(data.time);
+        tree.children.push({
+          id: newId,
+          name: data.name,
+          depth: 1,
+          evidence: evidenceInput && evidenceInput.checked ? "Yes" : "",
+          children: [],
+          color: "#6c757d",
+          description: data.description,
+          source: data.source != null ? data.source : "",
+          date: d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()),
+          time: pad2(d.getHours()) + ":" + pad2(d.getMinutes())
+        });
+        saveTree(tree);
+      }
       nameInput.value = "";
       descInput.value = "";
       timeInput.value = "";
@@ -1817,22 +1963,59 @@
     });
   }
 
+  function deepCloneTree(node) {
+    if (node == null || typeof node !== "object") return node;
+    if (Array.isArray(node)) return node.map(deepCloneTree);
+    var copy = {};
+    for (var k in node) {
+      if (Object.prototype.hasOwnProperty.call(node, k)) {
+        var v = node[k];
+        copy[k] = (typeof v === "object" && v !== null && !(v instanceof Date)) ? deepCloneTree(v) : v;
+      }
+    }
+    return copy;
+  }
+
   function exportEventsToJson() {
+    var tree = loadTree();
     var events = loadEvents();
     function pad2(n) { return n < 10 ? "0" + n : String(n); }
-    var exportData = events.map(function (evt) {
-      var d = new Date(evt.time || 0);
-      var dateStr = d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
-      var timeStr = pad2(d.getHours()) + ":" + pad2(d.getMinutes());
-      return {
-        name: evt.name || "",
-        description: evt.description || "",
-        source: evt.source != null && evt.source !== "" ? evt.source : "",
-        date: dateStr,
-        time: timeStr
+    var out;
+    if (tree && typeof tree === "object") {
+      var treeCopy = deepCloneTree(tree);
+      events.forEach(function (evt) { applyEventToTreeNode(treeCopy, evt); });
+      out = treeCopy;
+    } else {
+      out = {
+        id: "root-" + Date.now(),
+        name: "Timeline",
+        depth: 0,
+        evidence: "",
+        children: events.map(function (evt) {
+          var d = new Date(evt.time || 0);
+          var dateStr = Number.isNaN(d.getTime()) ? "" : (d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()));
+          var timeStr = Number.isNaN(d.getTime()) ? "" : (pad2(d.getHours()) + ":" + pad2(d.getMinutes()));
+          return {
+            id: evt.id,
+            name: evt.name || "",
+            depth: 1,
+            evidence: evt.evidence === "Yes" ? "Yes" : "",
+            children: [],
+            color: "#6c757d",
+            description: evt.description || "",
+            source: evt.source != null && evt.source !== "" ? evt.source : "",
+            date: dateStr,
+            time: timeStr
+          };
+        }),
+        color: "#e76f51",
+        description: "",
+        source: "",
+        date: "",
+        time: ""
       };
-    });
-    var json = JSON.stringify(exportData, null, 2);
+    }
+    var json = JSON.stringify(out, null, 2);
     var blob = new Blob([json], { type: "application/json" });
     var url = URL.createObjectURL(blob);
     var a = document.createElement("a");
@@ -1843,22 +2026,44 @@
   }
 
   function downloadJsonTemplate() {
-    var templateData = [
-      {
-        name: "Example Event 1",
-        description: "Description of the first event",
-        source: "https://example.com/source1",
-        date: "2024-01-15",
-        time: "10:30"
-      },
-      {
-        name: "Example Event 2",
-        description: "Description of the second event",
-        source: "",
-        date: "2024-02-20",
-        time: "14:45"
-      }
-    ];
+    var templateData = {
+      id: "n_template_root",
+      name: "Level 0",
+      depth: 0,
+      evidence: "",
+      children: [
+        {
+          id: "n_template_1",
+          name: "Level 1",
+          depth: 1,
+          evidence: "",
+          children: [
+            {
+              id: "n_template_2",
+              name: "Level 2",
+              depth: 2,
+              evidence: "",
+              children: [],
+              color: "#6c757d",
+              description: "Description of the event",
+              source: "https://example.com/source",
+              date: "2025-01-01",
+              time: "12:34"
+            }
+          ],
+          color: "#8b5a2b",
+          description: "Description",
+          source: "",
+          date: "2025-01-01",
+          time: "12:34"
+        }
+      ],
+      color: "#e76f51",
+      description: "",
+      source: "",
+      date: "",
+      time: ""
+    };
     var json = JSON.stringify(templateData, null, 2);
     var blob = new Blob([json], { type: "application/json" });
     var url = URL.createObjectURL(blob);
@@ -1870,8 +2075,9 @@
   }
 
   function removeAllEvents() {
-    if (!confirm("Remove all events? This cannot be undone.")) return;
+    if (!confirm("Remove all evidence? This cannot be undone.")) return;
     saveEvents([]);
+    saveTree(null);
     editingId = null;
     if (typeof cancelEdit === "function") cancelEdit();
     hideDetailsPanel();
@@ -2040,10 +2246,18 @@
           alert("Invalid JSON: " + (err.message || "parse error"));
           return;
         }
-        if (!Array.isArray(data)) {
-          alert("JSON must be an array of event objects.");
+        if (data != null && typeof data === "object" && Array.isArray(data.children)) {
+          saveTree(data);
+          var events = flattenTreeToEvents(data);
+          saveEvents(events);
+          renderTimeline();
           return;
         }
+        if (!Array.isArray(data)) {
+          alert("JSON must be a tree (object with children) or an array of event objects.");
+          return;
+        }
+        saveTree(null);
         var requiredKeys = ["name", "description", "source", "date", "time"];
         var urlRe = /^https?:\/\/.+/i;
         var dateRe = /^\d{4}-\d{2}-\d{2}$/;
@@ -2104,7 +2318,8 @@
             name: name.trim(),
             description: description.trim(),
             source: source,
-            time: d.toISOString()
+            time: d.toISOString(),
+            evidence: (row.evidence === "Yes") ? "Yes" : ""
           });
         }
         saveEvents(events);
