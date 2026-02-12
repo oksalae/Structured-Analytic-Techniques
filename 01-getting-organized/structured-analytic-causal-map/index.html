@@ -2241,7 +2241,6 @@
     saveKeywordsToStorage(data);
     const record = formDataToRecord(fromForm);
     const line = JSON.stringify(record) + '\n';
-    const filename = 'hypothesis_keywords.jsonl';
     try {
       const r = await fetch('/api/save-indicators', {
         method: 'POST',
@@ -2254,10 +2253,14 @@
       }
     } catch (_) {}
     const blob = new Blob([line], { type: 'application/x-ndjson; charset=utf-8' });
+    function pad2(n) { return n < 10 ? '0' + n : String(n); }
+    const now = new Date();
+    const dateTimeStr = now.getFullYear() + '-' + pad2(now.getMonth() + 1) + '-' + pad2(now.getDate()) + '_' + pad2(now.getHours()) + '-' + pad2(now.getMinutes()) + '-' + pad2(now.getSeconds());
+    const downloadFilename = 'hypothesis_keywords-' + dateTimeStr + '.jsonl';
     if (typeof window.showSaveFilePicker === 'function') {
       try {
         const handle = await window.showSaveFilePicker({
-          suggestedName: filename,
+          suggestedName: downloadFilename,
           types: [{ description: 'JSON Lines', accept: { 'application/x-ndjson': ['.jsonl'], 'text/plain': ['.jsonl'] } }]
         });
         const writable = await handle.createWritable();
@@ -2267,7 +2270,7 @@
         if (err.name !== 'AbortError') {
           const a = document.createElement('a');
           a.href = URL.createObjectURL(blob);
-          a.download = filename;
+          a.download = downloadFilename;
           a.click();
           URL.revokeObjectURL(a.href);
         }
@@ -2275,7 +2278,7 @@
     } else {
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = filename;
+      a.download = downloadFilename;
       a.click();
       URL.revokeObjectURL(a.href);
     }

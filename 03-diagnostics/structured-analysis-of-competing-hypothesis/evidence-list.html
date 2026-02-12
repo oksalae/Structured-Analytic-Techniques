@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Evidence events – by date and time</title>
+  <title>ACH</title>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -38,7 +38,31 @@
       font-weight: 600;
       color: #e0e0e0;
     }
+    .events-header .events-header-left { flex-shrink: 0; }
     .events-header .panel-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .btn-back-to-hub {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.75rem;
+      font: inherit;
+      font-size: 0.85rem;
+      color: #888;
+      background: transparent;
+      border: 1px solid #444;
+      border-radius: 4px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .btn-back-to-hub:hover {
+      color: #e0e0e0;
+      border-color: #666;
+    }
+    .btn-back-icon {
+      width: 1rem;
+      height: 1rem;
+      flex-shrink: 0;
+    }
     .update-file-hint {
       margin: 0.25rem 0 0.75rem 0;
       font-size: 0.8rem;
@@ -110,6 +134,13 @@
     }
     .ach-matrix .ach-th.ach-analysis { text-align: left; min-width: 180px; }
     .ach-matrix .ach-th.ach-event { text-align: left; min-width: 280px; }
+    .ach-evidence-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .ach-evidence-header-label { margin-right: 0.25rem; }
+    .ach-evidence-import-btn { padding: 0.25rem 0.5rem; font-size: 0.8rem; white-space: nowrap; }
     .ach-matrix td.ach-cell-event { vertical-align: top; min-width: 280px; padding: 0.5rem 0.6rem; }
     .ach-matrix td.ach-cell-event:has(.evidence-item.collapsed) { padding-top: 0.25rem; padding-bottom: 0.25rem; }
     .ach-matrix td.ach-cell-event .evidence-item { margin: 0; border: none; padding: 0.35rem 0; }
@@ -398,6 +429,14 @@
       border-radius: 4px;
     }
     .intelligence-requirement-box input::placeholder { color: #666; }
+    .intelligence-requirement-box input[readonly] { cursor: default; opacity: 0.95; }
+    .intelligence-requirement-box-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .intelligence-requirement-box-row input { flex: 1; min-width: 0; }
+    .intelligence-requirement-box-row .btn { flex-shrink: 0; padding: 0.25rem 0.5rem; font-size: 0.8rem; }
     .hypothesis-box {
       max-width: 25vw;
       padding: 0.75rem;
@@ -440,6 +479,12 @@
       font-size: 1rem;
       font-weight: 600;
       color: #b0b0b0;
+    }
+    .hypothesis-update-btn,
+    .hypothesis-clear-btn {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.8rem;
+      margin-right: 0.35rem;
     }
     .hypothesis-toggle-btn {
       padding: 0.25rem 0.5rem;
@@ -722,6 +767,12 @@
 
   <div class="layout">
     <div class="events-header">
+      <div class="events-header-left">
+        <a href="http://localhost:3000/" target="_self" class="btn-back-to-hub" aria-label="Back to main screen" title="Back to SAT Tools hub">
+          <svg class="btn-back-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/></svg>
+          Back to Main Screen
+        </a>
+      </div>
       <h2 class="events-title">Analysis of Competing Hypothesis for Structured Analysis Techniques</h2>
 <div class="panel-actions">
           <div class="dropdown-wrap">
@@ -747,12 +798,17 @@
     <div class="hypothesis-and-counters">
       <div class="intelligence-requirement-box">
         <label for="intelligence-requirement-input">Intelligence Requirement:</label>
-        <input type="text" id="intelligence-requirement-input" placeholder="Brief title of the analysis" aria-label="Intelligence requirement title">
+        <div class="intelligence-requirement-box-row">
+          <input type="text" id="intelligence-requirement-input" placeholder="Brief title of the analysis" aria-label="Intelligence requirement title" readonly>
+          <button type="button" class="btn" id="intelligence-requirement-save-btn">Save</button>
+        </div>
       </div>
       <div class="flex-row">
       <div class="hypothesis-box" id="hypothesis-box">
         <div class="hypothesis-box-header">
           <h2>Hypothesis</h2>
+          <button type="button" class="btn hypothesis-update-btn" id="hypothesis-update-btn" aria-label="Update from input file" title="Update from input/hypothesis.json">Update</button>
+          <button type="button" class="btn hypothesis-clear-btn" id="hypothesis-clear-btn" aria-label="Clear hypothesis list" title="Clear the list (does not save)">Clear hypothesis</button>
           <button type="button" class="hypothesis-toggle-btn" id="hypothesis-toggle-btn" aria-label="Hide hypothesis" title="Hide hypothesis">▼ Hide</button>
         </div>
         <div class="hypothesis-box-content" id="hypothesis-box-content">
@@ -800,7 +856,7 @@
       <table class="ach-matrix" id="ach-matrix">
         <thead>
           <tr>
-            <th class="ach-th ach-event">Evidence</th>
+            <th class="ach-th ach-event"><span class="ach-evidence-header"><span class="ach-evidence-header-label">Evidence</span><button type="button" class="btn ach-evidence-import-btn" id="evidence-header-import-btn">Import Evidence</button></span></th>
             <th class="ach-th ach-h1" id="ach-th-h1">H1</th>
             <th class="ach-th ach-h2" id="ach-th-h2">H2</th>
             <th class="ach-th ach-h3" id="ach-th-h3">H3</th>
@@ -1393,6 +1449,13 @@
           importJsonInput.click();
         });
       }
+      var evidenceHeaderImportBtn = document.getElementById('evidence-header-import-btn');
+      if (evidenceHeaderImportBtn && importJsonInput) {
+        evidenceHeaderImportBtn.addEventListener('click', function () {
+          importJsonInput.value = '';
+          importJsonInput.click();
+        });
+      }
       importJsonInput.addEventListener('change', function () {
         var file = importJsonInput.files && importJsonInput.files[0];
         if (!file) return;
@@ -1925,6 +1988,35 @@
         return div.innerHTML;
       }
 
+      function applyHypothesisData(data) {
+        if (!hypothesisListEl || !hypothesisStatusEl) return;
+        var irEl = document.getElementById('intelligence-requirement-input');
+        if (irEl) irEl.value = (data && typeof data === 'object' && !Array.isArray(data) && data.intelligence_requirement != null) ? String(data.intelligence_requirement) : '';
+        hypothesisData = [];
+        if (data && typeof data === 'object' && !Array.isArray(data)) {
+          Object.keys(data).sort().forEach(function (key) {
+            if (key === 'intelligence_requirement') return;
+            var o = data[key];
+            if (o && typeof o === 'object' && (o.id || o.title != null)) {
+              hypothesisData.push({
+                id: o.id != null ? String(o.id) : key,
+                title: o.title != null ? String(o.title) : '',
+                description: o.description != null ? String(o.description) : ''
+              });
+            }
+          });
+        }
+        hypothesisStatusEl.textContent = '';
+        if (hypothesisData.length === 0) {
+          hypothesisStatusEl.textContent = 'No hypotheses.';
+          hypothesisListEl.innerHTML = '';
+          return;
+        }
+        hypothesisListEl.innerHTML = hypothesisData.map(function (h, i) {
+          return '<li class="hypothesis-item" data-index="' + i + '">' + escapeHtml(h.id) + ' ' + escapeHtml(h.title) + '</li>';
+        }).join('');
+      }
+
       function loadHypotheses() {
         if (!hypothesisListEl || !hypothesisStatusEl) return;
         hypothesisStatusEl.textContent = 'Loading…';
@@ -1934,35 +2026,43 @@
             if (!r.ok) throw new Error(r.status);
             return r.json();
           })
-          .then(function (data) {
-            hypothesisData = [];
-            if (data && typeof data === 'object' && !Array.isArray(data)) {
-              var irEl = document.getElementById('intelligence-requirement-input');
-              if (irEl && data.intelligence_requirement != null) irEl.value = String(data.intelligence_requirement);
-              Object.keys(data).sort().forEach(function (key) {
-                if (key === 'intelligence_requirement') return;
-                var o = data[key];
-                if (o && typeof o === 'object' && (o.id || o.title != null)) {
-                  hypothesisData.push({
-                    id: o.id != null ? String(o.id) : key,
-                    title: o.title != null ? String(o.title) : '',
-                    description: o.description != null ? String(o.description) : ''
-                  });
-                }
-              });
-            }
-            hypothesisStatusEl.textContent = '';
-            if (hypothesisData.length === 0) {
-              hypothesisStatusEl.textContent = 'No hypotheses.';
-              return;
-            }
-            hypothesisListEl.innerHTML = hypothesisData.map(function (h, i) {
-              return '<li class="hypothesis-item" data-index="' + i + '">' + escapeHtml(h.id) + ' ' + escapeHtml(h.title) + '</li>';
-            }).join('');
-          })
+          .then(applyHypothesisData)
           .catch(function () {
             hypothesisStatusEl.textContent = 'Hypotheses unavailable (serve this folder to load).';
           });
+      }
+
+      var hypothesisUpdateBtn = document.getElementById('hypothesis-update-btn');
+      if (hypothesisUpdateBtn) {
+        hypothesisUpdateBtn.addEventListener('click', function () {
+          if (!hypothesisListEl || !hypothesisStatusEl) return;
+          hypothesisStatusEl.textContent = 'Updating…';
+          fetch('input/hypothesis.json?t=' + Date.now(), { cache: 'no-store' })
+            .then(function (r) {
+              if (!r.ok) throw new Error(r.status);
+              return r.json();
+            })
+            .then(function (data) {
+              applyHypothesisData(data);
+              statusEl.textContent = 'Hypotheses updated from input/hypothesis.json.';
+              statusEl.classList.remove('error');
+            })
+            .catch(function () {
+              hypothesisStatusEl.textContent = 'Update failed (input/hypothesis.json not found or invalid).';
+              statusEl.textContent = 'Update failed. Check input/hypothesis.json.';
+              statusEl.classList.add('error');
+            });
+        });
+      }
+
+      var hypothesisClearBtn = document.getElementById('hypothesis-clear-btn');
+      if (hypothesisClearBtn) {
+        hypothesisClearBtn.addEventListener('click', function () {
+          applyHypothesisData({});
+          if (hypothesisStatusEl) hypothesisStatusEl.textContent = 'Cleared. Click Update to load from file.';
+          statusEl.textContent = 'Intelligence Requirement and hypothesis list cleared. Click Update to load from file.';
+          statusEl.classList.remove('error');
+        });
       }
 
       if (hypothesisListEl) {
@@ -2001,7 +2101,7 @@
         var actionsEl = document.getElementById('hypothesis-modal-actions');
         if (actionsEl) actionsEl.style.display = 'none';
       }
-      // Hypothesis Save persists to hypothesis_example.json. Must always call api/save-hypothesis.
+      // Hypothesis Save writes to input/hypothesis.json (same file as Update reads from).
       var hypothesisSaveBtn = document.getElementById('hypothesis-save-btn');
       if (hypothesisSaveBtn) {
         hypothesisSaveBtn.addEventListener('click', function () {
@@ -2012,28 +2112,35 @@
           var description = descEl ? descEl.value.trim() : '';
           hypothesisData[hypothesisEditIndex].title = title;
           hypothesisData[hypothesisEditIndex].description = description;
-          var payload = {};
-          var irEl = document.getElementById('intelligence-requirement-input');
-          payload.intelligence_requirement = irEl ? irEl.value.trim() : '';
-          hypothesisData.forEach(function (h) {
-            payload[h.id] = { id: h.id, title: h.title || '', description: h.description || '' };
-          });
           closeHypothesisModal();
-          statusEl.textContent = 'Saving hypotheses…';
+          statusEl.textContent = 'Saving to file…';
           statusEl.classList.remove('error');
-          fetch('api/save-hypothesis', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          })
+          fetch('input/hypothesis.json?t=' + Date.now(), { cache: 'no-store' })
+            .then(function (r) { return r.ok ? r.json() : {}; })
+            .catch(function () { return {}; })
+            .then(function (existing) {
+              if (typeof existing !== 'object' || existing === null || Array.isArray(existing)) existing = {};
+              var irEl = document.getElementById('intelligence-requirement-input');
+              existing.intelligence_requirement = irEl ? irEl.value.trim() : '';
+              hypothesisData.forEach(function (h) {
+                existing[h.id] = { id: h.id, title: h.title || '', description: h.description || '' };
+              });
+              return fetch('api/save-input-hypothesis', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(existing)
+              });
+            })
             .then(function (r) {
               if (!r.ok) throw new Error(r.status + ' ' + r.statusText);
               return r.json();
             })
             .then(function (data) {
               if (data && data.ok) {
-                statusEl.textContent = 'Hypotheses saved.';
-                loadHypotheses();
+                statusEl.textContent = 'Written to input/hypothesis.json.';
+                hypothesisListEl.innerHTML = hypothesisData.map(function (h, i) {
+                  return '<li class="hypothesis-item" data-index="' + i + '">' + escapeHtml(h.id) + ' ' + escapeHtml(h.title) + '</li>';
+                }).join('');
               } else {
                 statusEl.textContent = 'Save failed: ' + (data && data.error ? data.error : 'Unknown error');
                 statusEl.classList.add('error');
@@ -2075,6 +2182,48 @@
       if (intelligenceRequirementInput) {
         intelligenceRequirementInput.addEventListener('blur', function () {
           saveHypothesisFile();
+        });
+      }
+
+      if (intelligenceRequirementInput) {
+        intelligenceRequirementInput.addEventListener('click', function () {
+          if (this.readOnly) {
+            this.readOnly = false;
+            this.focus();
+          }
+        });
+      }
+      var irSaveBtn = document.getElementById('intelligence-requirement-save-btn');
+      if (irSaveBtn && intelligenceRequirementInput) {
+        irSaveBtn.addEventListener('click', function () {
+          var value = intelligenceRequirementInput.value.trim();
+          fetch('input/hypothesis.json?t=' + Date.now(), { cache: 'no-store' })
+            .then(function (r) { return r.ok ? r.json() : {}; })
+            .catch(function () { return {}; })
+            .then(function (data) {
+              if (typeof data !== 'object' || data === null || Array.isArray(data)) data = {};
+              data.intelligence_requirement = value;
+              return fetch('api/save-input-hypothesis', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+              });
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (result) {
+              if (result && result.ok) {
+                intelligenceRequirementInput.readOnly = true;
+                statusEl.textContent = 'Intelligence requirement saved to input/hypothesis.json.';
+                statusEl.classList.remove('error');
+              } else {
+                statusEl.textContent = 'Save failed: ' + (result && result.error ? result.error : 'Unknown error');
+                statusEl.classList.add('error');
+              }
+            })
+            .catch(function (err) {
+              statusEl.textContent = 'Save failed: ' + (err.message || err);
+              statusEl.classList.add('error');
+            });
         });
       }
 

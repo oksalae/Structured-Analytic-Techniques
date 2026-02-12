@@ -32,7 +32,7 @@ This module has two main views, switched by the top buttons: **Hypothesis Genera
 1. **Source list (left):** Items from **input/Multiple_Hypothesis_Generation.txt** (and any you add with **Add +**) appear as rows with a **Generate** button. Use **Update** to re-read the file.
 2. **Generate:** Click **Generate** on an item → popup asks **Who?**, **What?**, **Why?** (What and Why unlock after you have at least one Who or What). Choose one → the item becomes a card in that column.
 3. **Tree:** Columns are Who → What → Why → **Permutations**. Cards can be dragged to reorder within a column; card text is editable. Use **Clear** to reset the tree and **Update** to propagate What/Why to new Who branches.
-4. **Save:** Use **Save hypothesis** on a permutation row to send that hypothesis to the ranking list (and **Hypotheses.txt**).
+4. **Save:** Use **Save hypothesis** on a permutation row to append that line to **Hypotheses.txt** and to write that title into **hypothesis.json** for ACH (first permutation → H1, second → H2, … up to H5). Add descriptions later in Hypothesis Ranking.
 
 ## Hypothesis Ranking workflow
 
@@ -61,8 +61,8 @@ This app’s server uses **port 8083** (see repo root `HUB-PAGE-INSTRUCTIONS.md`
 
 **Export:**
 
-1. **Save hypothesis** (from a Permutation row) — Appends that hypothesis line to **Hypotheses.txt** in this folder.
-2. **Save Hypothesis for ACH** (from an H1–H5 card) — POSTs to the server; writes **hypothesis.json** into `03-diagnostics/structured-analysis-of-competing-hypothesis/`. That file is a single JSON object: `intelligence_requirement` (string) and `H1`…`H5` (each `{ id, title, description }`), used by the ACH evidence-list tool. The **id** field is optional when reading (ACH infers it from the key). You can create the file with **only titles** from **Hypothesis Generation** (use **Save permutations to ACH**); then in **Hypothesis Ranking** you add or edit descriptions and save per card.
+1. **Save hypothesis** (from a Permutation row) — Appends that line to **Hypotheses.txt** and writes that permutation’s title to **hypothesis.json** (H1–H5 by tree order; descriptions can be added in Hypothesis Ranking).
+2. **Save Hypothesis for ACH** (from an H1–H5 card) — Writes that card’s title and description to **hypothesis.json** in `03-diagnostics/structured-analysis-of-competing-hypothesis/`. The file has `intelligence_requirement` and `H1`…`H5` (each `{ id, title, description }`). The **id** field is optional when reading (ACH infers it from the key).
 
 **Example input/Multiple_Hypothesis_Generation.txt:**
 

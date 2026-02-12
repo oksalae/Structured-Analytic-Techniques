@@ -98,6 +98,7 @@
     permutationDirtyIds.clear();
     buildTreeView();
     renderSourceList();
+    fetch('/api/delete-hypotheses-file', { method: 'POST' }).catch(function () {});
   }
 
   /** Copy What/Why structure from the fullest Who to others; sync all levels (add missing Whats and missing Whys per What); new IDs for all copies. */
@@ -398,6 +399,16 @@
             const whatRef = w && w.whats ? w.whats.find((p) => p.id === what.id) : null;
             const whyRef = whatRef && whatRef.whys ? whatRef.whys.find((y) => y.id === why.id) : null;
             if (whyRef) whyRef.editValue = permText;
+            let permIndex = -1;
+            let count = 0;
+            groups.forEach(function (g) {
+              (g.whats || []).forEach(function (p) {
+                (p.whys || []).forEach(function (y) {
+                  if (g.id === who.id && p.id === what.id && y.id === why.id) permIndex = count;
+                  count++;
+                });
+              });
+            });
             fetch('/api/save-hypothesis', {
               method: 'POST',
               headers: { 'Content-Type': 'text/plain; charset=utf-8' },
@@ -406,6 +417,17 @@
               if (r.ok) {
                 permutationDirtyIds.delete(why.id);
                 saveBtn.disabled = true;
+                if (permIndex >= 0 && permIndex < 5) {
+                  var achId = 'H' + (permIndex + 1);
+                  var irEl = document.getElementById('intelligence-requirement-input-generation');
+                  var payload = { id: achId, title: permText, description: '' };
+                  if (irEl && irEl.value.trim()) payload.intelligence_requirement = irEl.value.trim();
+                  fetch('/api/save-hypothesis-ach', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                  }).catch(function () {});
+                }
               }
             }).catch(function () {});
           });
@@ -586,6 +608,14 @@
     if (btnUpdateTree) btnUpdateTree.addEventListener('click', updateTreeFromReference);
   }
 
+  function updateCardTitlePreview(card) {
+    if (!card) return;
+    var preview = card.querySelector('.hypothesis-card-title-preview');
+    if (!preview) return;
+    var first = card.querySelector('.hypothesis-card-list .ranking-list-text');
+    preview.textContent = first ? first.textContent : '';
+  }
+
   function getRankingState() {
     var container = document.getElementById('hypothesis-cards-container');
     if (!container) return null;
@@ -667,6 +697,7 @@
           }
         }
       });
+      container.querySelectorAll('.hypothesis-card').forEach(function (card) { updateCardTitlePreview(card); });
     } catch (e) {}
   }
 
@@ -684,6 +715,32 @@
         renderRankingList([]);
         restoreRankingState();
       });
+  }
+
+  function clearRankingPage() {
+    renderRankingList([]);
+    var container = document.getElementById('hypothesis-cards-container');
+    if (container) {
+      container.querySelectorAll('.hypothesis-card').forEach(function (card) {
+        var listEl = card.querySelector('.hypothesis-card-list');
+        if (listEl) listEl.innerHTML = '';
+        var descEl = card.querySelector('.hypothesis-card-description');
+        if (descEl) descEl.value = '';
+        card.classList.add('is-collapsed');
+        var toggleBtn = card.querySelector('.hypothesis-card-toggle');
+        if (toggleBtn) {
+          toggleBtn.textContent = 'Show';
+          toggleBtn.setAttribute('aria-expanded', 'false');
+          toggleBtn.setAttribute('aria-label', 'Show hypothesis');
+        }
+      });
+    }
+    var irEl = document.getElementById('intelligence-requirement-input-ranking');
+    if (irEl) irEl.value = '';
+    if (container) container.querySelectorAll('.hypothesis-card').forEach(function (card) { updateCardTitlePreview(card); });
+    try {
+      localStorage.removeItem(STORAGE_KEY_RANKING);
+    } catch (e) {}
   }
 
   function createDragPreview(el, text) {
@@ -962,6 +1019,15 @@
       wrap.classList.remove('is-drag-over');
       var text = e.dataTransfer.getData('text/plain');
       if (!text) return;
+      var sourceList = document.getElementById('ranking-list');
+      var sourceListId = e.dataTransfer.getData('application/x-source-list');
+      var sourceIndexStr = e.dataTransfer.getData('application/x-source-index');
+      if (sourceList && sourceListId === 'ranking-list' && sourceIndexStr !== '') {
+        var idx = parseInt(sourceIndexStr, 10);
+        if (!Number.isNaN(idx) && idx >= 0 && idx < sourceList.children.length) {
+          sourceList.children[idx].remove();
+        }
+      }
       var li = document.createElement('li');
       li.className = 'ranking-list-item hypothesis-card-item';
       var textSpan = document.createElement('span');
@@ -973,12 +1039,15 @@
       btnRemove.textContent = '\u00d7';
       btnRemove.setAttribute('aria-label', 'Remove from card');
       btnRemove.addEventListener('click', function () {
+        var card = listEl.closest('.hypothesis-card');
         li.remove();
+        updateCardTitlePreview(card);
         saveRankingState();
       });
       li.appendChild(textSpan);
       li.appendChild(btnRemove);
       listEl.appendChild(li);
+      updateCardTitlePreview(wrap.closest('.hypothesis-card'));
       saveRankingState();
     });
   }
@@ -1059,42 +1128,6 @@
     initSaveAchBar('btn-save-ach-ranking', 'intelligence-requirement-input-ranking');
   }
 
-  function collectPermutationTitles() {
-    var titles = [];
-    groups.forEach(function (who) {
-      (who.whats || []).forEach(function (what) {
-        (what.whys || []).forEach(function (why) {
-          var t = (why.editValue != null ? why.editValue : '').trim();
-          titles.push(t);
-        });
-      });
-    });
-    return titles.slice(0, 5);
-  }
-
-  function initSavePermutationsToAch() {
-    var btn = document.getElementById('btn-save-permutations-ach');
-    if (!btn) return;
-    btn.addEventListener('click', function () {
-      var titles = collectPermutationTitles();
-      var irEl = document.getElementById('intelligence-requirement-input-generation');
-      var intelligence_requirement = irEl ? irEl.value.trim() : '';
-      var payload = { titles: titles };
-      if (intelligence_requirement !== '') payload.intelligence_requirement = intelligence_requirement;
-      fetch('/api/save-hypothesis-ach', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }).then(function (r) {
-        if (r.ok) {
-          var label = btn.textContent;
-          btn.textContent = 'Saved';
-          setTimeout(function () { btn.textContent = label; }, 2000);
-        }
-      }).catch(function () {});
-    });
-  }
-
   function initHypothesisCardToggle() {
     var container = document.getElementById('hypothesis-cards-container');
     if (!container) return;
@@ -1118,9 +1151,11 @@
     var btnGen = document.getElementById('btn-page-generation');
     var btnRank = document.getElementById('btn-page-ranking');
     var btnRankingUpdate = document.getElementById('btn-ranking-update');
+    var btnRankingClear = document.getElementById('btn-ranking-clear');
     if (btnGen) btnGen.addEventListener('click', function () { showPage('page-generation'); });
     if (btnRank) btnRank.addEventListener('click', function () { showPage('page-ranking'); });
     if (btnRankingUpdate) btnRankingUpdate.addEventListener('click', loadHypothesesFile);
+    if (btnRankingClear) btnRankingClear.addEventListener('click', clearRankingPage);
   }
 
   function init() {
@@ -1132,7 +1167,6 @@
     initSaveHypothesisAch();
     initSaveAchGeneration();
     initSaveAchRanking();
-    initSavePermutationsToAch();
     initHypothesisCardToggle();
     initUpdateSourceButton();
     initAddSourceModal();

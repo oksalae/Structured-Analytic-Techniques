@@ -768,6 +768,12 @@
     });
   }
 
+  window.cleanBoard = function () {
+    var state = emptyState();
+    render(state);
+    setupDragAndDrop(state);
+  };
+
   window.refreshFromIndicators = function () {
     var btn = document.getElementById('btn-refresh');
     if (btn) { btn.disabled = true; btn.textContent = 'Refreshing…'; }
@@ -796,6 +802,8 @@
       setupDragAndDrop(state);
       var btn = document.getElementById('btn-refresh');
       if (btn) btn.addEventListener('click', window.refreshFromIndicators);
+      var btnClean = document.getElementById('btn-clean');
+      if (btnClean) btnClean.addEventListener('click', window.cleanBoard);
       return;
     }
 
@@ -806,6 +814,8 @@
       setupDragAndDrop(s);
       var btn = document.getElementById('btn-refresh');
       if (btn) btn.addEventListener('click', window.refreshFromIndicators);
+      var btnClean = document.getElementById('btn-clean');
+      if (btnClean) btnClean.addEventListener('click', window.cleanBoard);
     }
 
     fetch(CIRCLEBOARD_DATA_FILE)

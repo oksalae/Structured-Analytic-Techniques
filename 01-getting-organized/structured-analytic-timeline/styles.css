@@ -412,24 +412,38 @@ body {
   width: 100%;
 }
 
-/* Evidence Details: Generate Hypothesis Keywords in upper corner, small */
-.event-details-actions-top {
-  position: absolute;
-  top: 0.5rem;
-  right: 2.5rem;
-  margin: 0;
-  padding: 0;
-  border: none;
+/* Evidence Details: Generate Hypothesis Keywords next to panel title in header */
+#panel-details-handle .btn-indicators-small {
+  flex-shrink: 0;
+  margin-left: 0.25rem;
 }
 
-.event-details-actions-top .btn-indicators {
-  width: auto;
+#panel-details-handle .btn-panel-hide {
+  margin-left: auto;
 }
 
 .btn-indicators-small {
   padding: 0.2rem 0.4rem;
   font-size: 0.7rem;
   font-weight: 500;
+}
+
+/* Toolbar: green Create New Evidence button */
+.btn-create-evidence {
+  padding: 0.35rem 0.75rem;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #fff;
+  background: #2d6a4f;
+  border: 1px solid #2d6a4f;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-create-evidence:hover {
+  background: #40916c;
+  border-color: #40916c;
 }
 
 #overlay-root {
@@ -450,6 +464,87 @@ body {
 
 #overlay-root .indicators-overlay[hidden] {
   display: none !important;
+}
+
+#overlay-root .add-evidence-overlay {
+  pointer-events: auto;
+}
+
+#overlay-root .add-evidence-overlay[hidden] {
+  display: none !important;
+}
+
+.add-evidence-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.add-evidence-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.add-evidence-modal {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  padding: 1.25rem;
+}
+
+.add-evidence-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.add-evidence-modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.add-evidence-modal-close {
+  padding: 0.2rem 0.5rem;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-evidence-modal-close:hover {
+  color: var(--text);
+  background: var(--border);
+}
+
+.add-evidence-modal-body {
+  padding: 0;
+}
+
+.add-evidence-modal-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .indicators-overlay {
@@ -659,6 +754,23 @@ body {
   width: 1rem;
   height: 1rem;
   flex-shrink: 0;
+}
+
+.btn-save-header {
+  padding: 0.35rem 0.75rem;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #fff;
+  background: #b91c1c;
+  border: 1px solid #b91c1c;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-save-header:hover {
+  background: #dc2626;
+  border-color: #dc2626;
 }
 
 .btn-file-menu {

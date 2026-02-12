@@ -25,6 +25,39 @@ body {
   position: relative;
 }
 
+.app-toolbar {
+  flex-shrink: 0;
+  padding-right: 12rem;
+  margin-bottom: 0.5rem;
+}
+
+.btn-back-to-hub {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  font: inherit;
+  font-size: 0.85rem;
+  color: #5c5c5c;
+  background: transparent;
+  border: 1px solid #c5c2bd;
+  border-radius: 4px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.btn-back-to-hub:hover {
+  color: #1a1a1a;
+  border-color: #6b9bd1;
+}
+
+.btn-back-icon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
 .page-switcher {
   position: absolute;
   top: 1rem;
@@ -120,6 +153,23 @@ body {
 }
 
 .btn-ranking-update:hover {
+  border-color: #6b9bd1;
+  background: #f0f6fc;
+}
+
+.btn-ranking-clear {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: #1a1a1a;
+  background: #fff;
+  border: 1px solid #c5c2bd;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.btn-ranking-clear:hover {
   border-color: #6b9bd1;
   background: #f0f6fc;
 }
@@ -386,7 +436,7 @@ body {
 
 .hypothesis-card-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 0.75rem;
   padding-bottom: 0.75rem;
@@ -407,6 +457,23 @@ body {
   font-size: 1.1rem;
   font-weight: 600;
   color: #1a1a1a;
+  flex-shrink: 0;
+}
+
+.hypothesis-card-title-preview {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0 0.5rem;
+  font-size: 0.9rem;
+  color: #5c5c5c;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.hypothesis-card.is-collapsed .hypothesis-card-title-preview {
+  color: #1a1a1a;
+  font-weight: 500;
 }
 
 .hypothesis-card-toggle {
@@ -437,7 +504,7 @@ body {
 }
 
 .hypothesis-card.is-collapsed .hypothesis-card-header {
-  min-height: 2rem;
+  min-height: 0;
 }
 
 .hypothesis-card-field {

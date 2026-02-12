@@ -14,6 +14,8 @@ Then open **http://localhost:3000** in your browser. The hub shows one button pe
 
 Alternatively, run **`node server.js`** from the repo root for the same result.
 
+**Note:** The folder structure supports only one information requirement task. To avoid collision between different analyses, it is suggested that once downloaded the whole repository is moved into a dedicated project folder (e.g. one folder per case or task).
+
 ## Screenshot (hub / main page)
 
 ![Hub – tool launcher](assets/img/hub.png)  

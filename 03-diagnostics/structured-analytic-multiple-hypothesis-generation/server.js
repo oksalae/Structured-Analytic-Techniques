@@ -276,6 +276,17 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (req.method === "POST" && urlPath === "/api/delete-hypotheses-file") {
+    fs.unlink(HYPOTHESES_FILE, (err) => {
+      if (err && err.code !== "ENOENT") {
+        send(res, 500, JSON.stringify({ ok: false, error: String(err.message) }), "application/json");
+        return;
+      }
+      send(res, 200, JSON.stringify({ ok: true }), "application/json");
+    });
+    return;
+  }
+
   if (req.method !== "GET") {
     send(res, 405, "Method not allowed", "text/plain");
     return;

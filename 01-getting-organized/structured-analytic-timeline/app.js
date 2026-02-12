@@ -37,20 +37,17 @@
   const btnLayouts = document.getElementById("btn-layouts");
   const layoutsDropdown = document.getElementById("layouts-dropdown");
   const layoutsWrap = document.getElementById("layouts-wrap");
-  const layoutsCheckAddEvent = document.getElementById("layouts-check-add-event");
   const layoutsCheckEvents = document.getElementById("layouts-check-events");
   const layoutsCheckDetails = document.getElementById("layouts-check-details");
-  const layoutsToggleAddEvent = document.getElementById("layouts-toggle-add-event");
   const layoutsToggleEvents = document.getElementById("layouts-toggle-events");
   const layoutsToggleDetails = document.getElementById("layouts-toggle-details");
   const btnFileMenu = document.getElementById("btn-file-menu");
   const fileDropdown = document.getElementById("file-dropdown");
   const fileImportEvents = document.getElementById("file-import-events");
-  const fileExportEvents = document.getElementById("file-export-events");
+  const btnSaveHeader = document.getElementById("btn-save-header");
   const fileDownloadTemplate = document.getElementById("file-download-template");
   const fileRemoveAll = document.getElementById("file-remove-all");
   const jsonFileInput = document.getElementById("json-file-input");
-  const btnHideAddEvent = document.getElementById("btn-hide-add-event");
   const btnHideEvents = document.getElementById("btn-hide-events");
   const btnHideDetails = document.getElementById("btn-hide-details");
   const errorName = document.getElementById("error-name");
@@ -58,15 +55,18 @@
   const errorSource = document.getElementById("error-source");
   const errorDate = document.getElementById("error-date");
   const errorTime = document.getElementById("error-time");
-  const formTitle = document.getElementById("form-title");
+  const formTitle = document.getElementById("add-evidence-modal-title");
   const btnSubmit = document.getElementById("btn-submit");
   const btnCancel = document.getElementById("btn-cancel");
   const eventDetailsContent = document.getElementById("event-details-content");
   const eventDetailsClose = document.getElementById("event-details-close");
   const eventsListEl = document.getElementById("events-list");
-  const panelAddEvent = document.getElementById("panel-add-event");
   const panelEvents = document.getElementById("panel-events");
   const panelDetails = document.getElementById("panel-details");
+  const addEvidenceOverlay = document.getElementById("add-evidence-overlay");
+  const addEvidenceBackdrop = document.getElementById("add-evidence-backdrop");
+  const addEvidenceModalClose = document.getElementById("add-evidence-modal-close");
+  const btnCreateEvidence = document.getElementById("btn-create-evidence");
   const timelineScalerOverview = document.getElementById("timeline-scaler-overview");
   const timelineScalerSelection = document.getElementById("timeline-scaler-selection");
   const scalerHandleLeft = document.getElementById("scaler-handle-left");
@@ -77,7 +77,6 @@
   const btnYearScaleApply = document.getElementById("btn-year-scale-apply");
   const timelineToolbar = document.getElementById("timeline-toolbar");
   const timelineToolbarResizeHandle = document.getElementById("timeline-toolbar-resize-handle");
-  const btnIndicatorsToolbar = document.getElementById("btn-indicators-toolbar");
   const btnIndicatorsDetails = document.getElementById("btn-indicators-details");
   const indicatorsOverlay = document.getElementById("indicators-overlay");
   const indicatorsBackdrop = document.getElementById("indicators-backdrop");
@@ -208,7 +207,8 @@
     function walk(node) {
       var dateStr = node && (node.date != null && node.date !== "") ? String(node.date).trim() : "";
       var timeStr = node && (node.time != null && node.time !== "") ? String(node.time).trim() : "";
-      if (dateStr && timeStr) {
+      if (dateStr) {
+        if (!timeStr) timeStr = "00:00";
         if (timeStr.length === 4) timeStr = "0" + timeStr;
         var combined = dateStr.indexOf("T") >= 0 ? dateStr : dateStr + "T" + (timeStr.length <= 5 ? timeStr + ":00" : timeStr);
         var d = new Date(combined);
@@ -1187,7 +1187,15 @@
     formTitle.textContent = "Edit evidence";
     btnSubmit.textContent = "Update evidence";
     btnCancel.hidden = false;
-    form.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    openAddEvidenceOverlay();
+  }
+
+  function openAddEvidenceOverlay() {
+    if (addEvidenceOverlay) addEvidenceOverlay.hidden = false;
+  }
+
+  function closeAddEvidenceOverlay() {
+    if (addEvidenceOverlay) addEvidenceOverlay.hidden = true;
   }
 
   function cancelEdit() {
@@ -1201,7 +1209,8 @@
     clearFieldErrors();
     formTitle.textContent = "Create New Evidence";
     btnSubmit.textContent = "Add evidence";
-    btnCancel.hidden = true;
+    btnCancel.hidden = false;
+    closeAddEvidenceOverlay();
   }
 
   function deleteEvent(id) {
@@ -1412,11 +1421,6 @@
     resetIndicatorsForm();
   }
 
-  if (btnIndicatorsToolbar) {
-    btnIndicatorsToolbar.addEventListener("click", function () {
-      openIndicatorsPopup(false);
-    });
-  }
   if (btnIndicatorsDetails) {
     btnIndicatorsDetails.addEventListener("click", function () {
       openIndicatorsPopup(true);
@@ -1437,8 +1441,14 @@
     indicatorsBackdrop.addEventListener("click", closeIndicatorsPopup);
   }
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && indicatorsOverlay && !indicatorsOverlay.hidden) {
+    if (e.key !== "Escape") return;
+    if (indicatorsOverlay && !indicatorsOverlay.hidden) {
       closeIndicatorsPopup();
+      return;
+    }
+    if (addEvidenceOverlay && !addEvidenceOverlay.hidden) {
+      closeAddEvidenceOverlay();
+      cancelEdit();
     }
   });
 
@@ -1464,8 +1474,9 @@
         saveEvents(events);
         var tree = loadTree();
         if (tree) applyEventToTreeNode(tree, events[idx]);
-        if (tree) saveTree(tree);
+        if (tree)         saveTree(tree);
         cancelEdit();
+        closeAddEvidenceOverlay();
       }
     } else {
       var newId = generateId();
@@ -1501,11 +1512,32 @@
       descInput.value = "";
       timeInput.value = "";
       clearFieldErrors();
+      closeAddEvidenceOverlay();
     }
     renderTimeline();
   });
 
+  if (btnCreateEvidence) {
+    btnCreateEvidence.addEventListener("click", function () {
+      cancelEdit();
+      openAddEvidenceOverlay();
+    });
+  }
+  if (addEvidenceModalClose) {
+    addEvidenceModalClose.addEventListener("click", function () {
+      closeAddEvidenceOverlay();
+      cancelEdit();
+    });
+  }
+  if (addEvidenceBackdrop) {
+    addEvidenceBackdrop.addEventListener("click", function () {
+      closeAddEvidenceOverlay();
+      cancelEdit();
+    });
+  }
+
   btnCancel.addEventListener("click", function () {
+    closeAddEvidenceOverlay();
     cancelEdit();
   });
 
@@ -1524,7 +1556,6 @@
 
   var LAYOUT_KEY = "ui.panelLayout";
   var PANEL_DEFAULTS = {
-    "add-event": { x: 12, y: -3, w: 320, h: 375 },
     "events": { x: -1, y: -3, w: 280, h: 560 },
     "details": { x: -4, y: -1, w: -1, h: 280 }
   };
@@ -1605,8 +1636,8 @@
 
   function resetLayout() {
     localStorage.removeItem(LAYOUT_KEY);
-    ["add-event", "events", "details"].forEach(function (id) {
-      var el = document.getElementById("panel-" + (id === "add-event" ? "add-event" : id === "events" ? "events" : "details"));
+    ["events", "details"].forEach(function (id) {
+      var el = document.getElementById("panel-" + id);
       if (el) applyPanelLayout(el, id);
     });
   }
@@ -1617,21 +1648,13 @@
     var bottomMargin = 12;
     var leftColWidth = 320;
     var gap = 24;
-    var createPanelHeight = 375;
     var detailsPanelHeight = 280;
-    var gapBetweenEventsAndCreate = 8;
     var maxH = getPanelMaxHeight();
-    var eventsHeight = window.innerHeight - topMargin - bottomMargin - createPanelHeight - gapBetweenEventsAndCreate;
+    var eventsHeight = window.innerHeight - topMargin - bottomMargin - detailsPanelHeight - 8;
     eventsHeight = Math.max(200, Math.min(eventsHeight, maxH));
     var detailsWidth = window.innerWidth - (leftMargin + leftColWidth + gap) - leftMargin;
     detailsWidth = Math.max(420, detailsWidth);
     return {
-      "add-event": {
-        x: leftMargin,
-        y: window.innerHeight - bottomMargin - createPanelHeight,
-        w: leftColWidth,
-        h: createPanelHeight
-      },
       "events": {
         x: leftMargin,
         y: topMargin,
@@ -1656,7 +1679,7 @@
   function setupPanelDrag(handleEl, panelEl, panelId) {
     if (!handleEl || !panelEl) return;
     var minW = panelId === "details" ? 420 : 260;
-    var minH = panelId === "details" ? 160 : panelId === "add-event" ? 280 : 360;
+    var minH = panelId === "details" ? 160 : 360;
     handleEl.addEventListener("pointerdown", function (e) {
       if (e.target.tagName === "BUTTON" || e.target.tagName === "INPUT" || e.target.closest("button") || e.target.closest("input")) return;
       e.preventDefault();
@@ -1699,7 +1722,7 @@
   function setupPanelResize(resizeEl, panelEl, panelId) {
     if (!resizeEl || !panelEl) return;
     var minW = panelId === "details" ? 420 : 260;
-    var minH = panelId === "details" ? 160 : panelId === "add-event" ? 280 : 360;
+    var minH = panelId === "details" ? 160 : 360;
     resizeEl.addEventListener("pointerdown", function (e) {
       e.preventDefault();
       var startX = e.clientX;
@@ -1743,29 +1766,25 @@
     });
   }
 
-  [panelAddEvent, panelEvents, panelDetails].forEach(function (panelEl) {
+  [panelEvents, panelDetails].forEach(function (panelEl) {
     if (panelEl) {
       panelEl.addEventListener("mousedown", function () { bringPanelToFront(panelEl); });
     }
   });
 
-  setupPanelDrag(document.getElementById("panel-add-event-handle"), panelAddEvent, "add-event");
   setupPanelDrag(document.getElementById("panel-events-handle"), panelEvents, "events");
   setupPanelDrag(document.getElementById("panel-details-handle"), panelDetails, "details");
-  setupPanelResize(document.getElementById("panel-add-event-resize"), panelAddEvent, "add-event");
   setupPanelResize(document.getElementById("panel-events-resize"), panelEvents, "events");
   setupPanelResize(document.getElementById("panel-details-resize"), panelDetails, "details");
 
-  applyPanelLayout(panelAddEvent, "add-event");
   applyPanelLayout(panelEvents, "events");
   applyPanelLayout(panelDetails, "details");
 
-  var SHOW_ADD_EVENT_KEY = "ui.showAddEvent";
   var SHOW_EVENTS_KEY = "ui.showEvents";
   var SHOW_DETAILS_KEY = "ui.showEventDetails";
 
   function getLayoutVisibility(which) {
-    var key = which === "add-event" ? SHOW_ADD_EVENT_KEY : which === "events" ? SHOW_EVENTS_KEY : SHOW_DETAILS_KEY;
+    var key = which === "events" ? SHOW_EVENTS_KEY : SHOW_DETAILS_KEY;
     var raw = localStorage.getItem(key);
     if (raw === "false") return false;
     if (raw === "true") return true;
@@ -1773,21 +1792,17 @@
   }
 
   function setLayoutVisibility(which, visible) {
-    var key = which === "add-event" ? SHOW_ADD_EVENT_KEY : which === "events" ? SHOW_EVENTS_KEY : SHOW_DETAILS_KEY;
+    var key = which === "events" ? SHOW_EVENTS_KEY : SHOW_DETAILS_KEY;
     localStorage.setItem(key, visible ? "true" : "false");
   }
 
   function applyLayoutVisibility() {
-    var showAdd = getLayoutVisibility("add-event");
     var showEvents = getLayoutVisibility("events");
     var showDetails = getLayoutVisibility("details");
-    if (panelAddEvent) panelAddEvent.classList.toggle("panel-hidden", !showAdd);
     if (panelEvents) panelEvents.classList.toggle("panel-hidden", !showEvents);
     if (panelDetails) panelDetails.classList.toggle("panel-hidden", !showDetails);
-    if (layoutsCheckAddEvent) layoutsCheckAddEvent.checked = showAdd;
     if (layoutsCheckEvents) layoutsCheckEvents.checked = showEvents;
     if (layoutsCheckDetails) layoutsCheckDetails.checked = showDetails;
-    if (layoutsToggleAddEvent) layoutsToggleAddEvent.setAttribute("aria-checked", showAdd ? "true" : "false");
     if (layoutsToggleEvents) layoutsToggleEvents.setAttribute("aria-checked", showEvents ? "true" : "false");
     if (layoutsToggleDetails) layoutsToggleDetails.setAttribute("aria-checked", showDetails ? "true" : "false");
   }
@@ -1897,13 +1912,6 @@
     if (fileDropdown && !fileDropdown.hidden && btnFileMenu && !btnFileMenu.contains(e.target) && !fileDropdown.contains(e.target)) closeFileMenu();
   });
 
-  if (layoutsCheckAddEvent) {
-    layoutsCheckAddEvent.addEventListener("change", function () {
-      var visible = layoutsCheckAddEvent.checked;
-      setLayoutVisibility("add-event", visible);
-      applyLayoutVisibility();
-    });
-  }
   if (layoutsCheckEvents) {
     layoutsCheckEvents.addEventListener("change", function () {
       var visible = layoutsCheckEvents.checked;
@@ -1915,14 +1923,6 @@
     layoutsCheckDetails.addEventListener("change", function () {
       var visible = layoutsCheckDetails.checked;
       setLayoutVisibility("details", visible);
-      applyLayoutVisibility();
-    });
-  }
-  if (layoutsToggleAddEvent) {
-    layoutsToggleAddEvent.addEventListener("click", function (e) {
-      if (e.target === layoutsCheckAddEvent) return;
-      layoutsCheckAddEvent.checked = !layoutsCheckAddEvent.checked;
-      setLayoutVisibility("add-event", layoutsCheckAddEvent.checked);
       applyLayoutVisibility();
     });
   }
@@ -1944,12 +1944,6 @@
   }
 
 
-  if (btnHideAddEvent) {
-    btnHideAddEvent.addEventListener("click", function () {
-      setLayoutVisibility("add-event", false);
-      applyLayoutVisibility();
-    });
-  }
   if (btnHideEvents) {
     btnHideEvents.addEventListener("click", function () {
       setLayoutVisibility("events", false);
@@ -2018,9 +2012,11 @@
     var json = JSON.stringify(out, null, 2);
     var blob = new Blob([json], { type: "application/json" });
     var url = URL.createObjectURL(blob);
+    var now = new Date();
+    var dateTimeStr = now.getFullYear() + "-" + pad2(now.getMonth() + 1) + "-" + pad2(now.getDate()) + "_" + pad2(now.getHours()) + "-" + pad2(now.getMinutes()) + "-" + pad2(now.getSeconds());
     var a = document.createElement("a");
     a.href = url;
-    a.download = "timeline-events.json";
+    a.download = "timeline-events-" + dateTimeStr + ".json";
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -2102,10 +2098,9 @@
       alert(msg);
     });
   }
-  if (fileExportEvents) {
-    fileExportEvents.addEventListener("click", function () {
+  if (btnSaveHeader) {
+    btnSaveHeader.addEventListener("click", function () {
       exportEventsToJson();
-      closeFileMenu();
     });
   }
   if (fileDownloadTemplate) {
@@ -2224,10 +2219,8 @@
     timelinePanY = 0;
     var layout = getResetViewPanelLayout();
     savePanelLayout(layout);
-    applyPanelLayout(panelAddEvent, "add-event");
     applyPanelLayout(panelEvents, "events");
     applyPanelLayout(panelDetails, "details");
-    setLayoutVisibility("add-event", true);
     setLayoutVisibility("events", true);
     setLayoutVisibility("details", true);
     applyLayoutVisibility();

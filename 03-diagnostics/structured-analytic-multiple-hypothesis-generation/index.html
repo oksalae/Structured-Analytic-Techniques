@@ -8,6 +8,12 @@
 </head>
 <body>
   <main class="hypothesis-app">
+    <div class="app-toolbar">
+      <a href="http://localhost:3000/" target="_self" class="btn-back-to-hub" aria-label="Back to main screen" title="Back to SAT Tools hub">
+        <svg class="btn-back-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/></svg>
+        Back to Main Screen
+      </a>
+    </div>
     <div class="page-switcher">
       <button type="button" class="page-switcher-btn is-active" id="btn-page-generation" aria-pressed="true">Hypothesis Generation</button>
       <button type="button" class="page-switcher-btn" id="btn-page-ranking" aria-pressed="false">Hypothesis Ranking</button>
@@ -21,7 +27,6 @@
           <label for="intelligence-requirement-input-generation">Intelligence requirement</label>
           <input type="text" id="intelligence-requirement-input-generation" placeholder="Brief title of the analysis" aria-label="Intelligence requirement">
           <button type="button" class="btn-save-ach-bar" id="btn-save-ach-generation" aria-label="Save intelligence requirement to hypothesis.json">Save to ACH</button>
-          <button type="button" class="btn-save-ach-bar" id="btn-save-permutations-ach" aria-label="Save permutation titles to hypothesis.json (H1–H5); add descriptions in Hypothesis Ranking">Save permutations to ACH</button>
         </div>
       </header>
 
@@ -71,6 +76,7 @@
         <div class="ranking-left">
           <div class="ranking-toolbar">
             <button type="button" class="btn-ranking-update" id="btn-ranking-update" aria-label="Re-read Hypotheses.txt">Update</button>
+            <button type="button" class="btn-ranking-clear" id="btn-ranking-clear" aria-label="Clear the page (does not write to file); use Update to load from Hypotheses.txt">Clear</button>
           </div>
           <ul class="ranking-list" id="ranking-list" role="list">
             <!-- Filled by JS from Hypotheses.txt -->
@@ -81,6 +87,7 @@
             <div class="hypothesis-card is-collapsed" data-hypothesis-id="H1">
               <div class="hypothesis-card-header">
                 <h2 class="hypothesis-card-heading">Hypothesis 1</h2>
+                <span class="hypothesis-card-title-preview" aria-hidden="true"></span>
                 <button type="button" class="hypothesis-card-toggle" aria-label="Show hypothesis" aria-expanded="false">Show</button>
               </div>
               <div class="hypothesis-card-body">
@@ -103,6 +110,7 @@
             <div class="hypothesis-card is-collapsed" data-hypothesis-id="H2">
               <div class="hypothesis-card-header">
                 <h2 class="hypothesis-card-heading">Hypothesis 2</h2>
+                <span class="hypothesis-card-title-preview" aria-hidden="true"></span>
                 <button type="button" class="hypothesis-card-toggle" aria-label="Show hypothesis" aria-expanded="false">Show</button>
               </div>
               <div class="hypothesis-card-body">
@@ -125,6 +133,7 @@
             <div class="hypothesis-card is-collapsed" data-hypothesis-id="H3">
               <div class="hypothesis-card-header">
                 <h2 class="hypothesis-card-heading">Hypothesis 3</h2>
+                <span class="hypothesis-card-title-preview" aria-hidden="true"></span>
                 <button type="button" class="hypothesis-card-toggle" aria-label="Show hypothesis" aria-expanded="false">Show</button>
               </div>
               <div class="hypothesis-card-body">
@@ -147,6 +156,7 @@
             <div class="hypothesis-card is-collapsed" data-hypothesis-id="H4">
               <div class="hypothesis-card-header">
                 <h2 class="hypothesis-card-heading">Hypothesis 4</h2>
+                <span class="hypothesis-card-title-preview" aria-hidden="true"></span>
                 <button type="button" class="hypothesis-card-toggle" aria-label="Show hypothesis" aria-expanded="false">Show</button>
               </div>
               <div class="hypothesis-card-body">
@@ -169,6 +179,7 @@
             <div class="hypothesis-card is-collapsed" data-hypothesis-id="H5">
               <div class="hypothesis-card-header">
                 <h2 class="hypothesis-card-heading">Hypothesis 5</h2>
+                <span class="hypothesis-card-title-preview" aria-hidden="true"></span>
                 <button type="button" class="hypothesis-card-toggle" aria-label="Show hypothesis" aria-expanded="false">Show</button>
               </div>
               <div class="hypothesis-card-body">
