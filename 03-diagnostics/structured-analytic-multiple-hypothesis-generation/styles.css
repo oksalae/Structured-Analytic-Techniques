@@ -969,6 +969,26 @@ body {
   color: #fff;
 }
 
+.btn-toolbar-link.btn-hypothesis-permutation-generator {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: #fff;
+  background: #27ae60;
+  border: 1px solid #219653;
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  display: inline-block;
+}
+
+.btn-toolbar-link.btn-hypothesis-permutation-generator:hover {
+  background: #219653;
+  border-color: #1e8449;
+  color: #fff;
+}
+
 .tree-viewport {
   flex: 1;
   min-height: 200px;

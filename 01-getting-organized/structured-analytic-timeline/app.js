@@ -1176,6 +1176,8 @@
 
   function hideDetailsPanel() {
     activeEventId = null;
+    var btnDetailsDelete = document.getElementById("btn-details-delete");
+    if (btnDetailsDelete) btnDetailsDelete.hidden = true;
     if (eventDetailsContent) {
       eventDetailsContent.innerHTML = "<p class=\"event-details-placeholder\">Empty state — click evidence on the timeline or in the Evidence list to view details.</p>";
     }
@@ -1213,6 +1215,8 @@
       dateTimeHtml +
       '<div class="event-details-description">' + escapeHtml(evt.description || "") + sourceInlineHtml + "</div>" +
       evidenceHtml;
+    var btnDetailsDelete = document.getElementById("btn-details-delete");
+    if (btnDetailsDelete) btnDetailsDelete.hidden = false;
     var detailsEvidenceCheckbox = document.getElementById("details-evidence");
     if (detailsEvidenceCheckbox) {
       detailsEvidenceCheckbox.addEventListener("change", function () {
@@ -1631,6 +1635,12 @@
   if (eventDetailsClose) {
     eventDetailsClose.addEventListener("click", function () {
       hideDetailsPanel();
+    });
+  }
+  var btnDetailsDelete = document.getElementById("btn-details-delete");
+  if (btnDetailsDelete) {
+    btnDetailsDelete.addEventListener("click", function () {
+      if (activeEventId) deleteEvent(activeEventId);
     });
   }
   document.addEventListener("keydown", function (e) {
@@ -2164,6 +2174,17 @@
     fileDownloadTemplate.addEventListener("click", function () {
       downloadJsonTemplate();
       closeFileMenu();
+    });
+  }
+  var fileDownloadEvidence = document.getElementById("file-download-evidence");
+  if (fileDownloadEvidence) {
+    fileDownloadEvidence.addEventListener("click", function () {
+      closeFileMenu();
+      var json = JSON.stringify(buildEvidenceTree(), null, 2);
+      function pad2(n) { return n < 10 ? "0" + n : String(n); }
+      var now = new Date();
+      var dateTimeStr = now.getFullYear() + "-" + pad2(now.getMonth() + 1) + "-" + pad2(now.getDate()) + "_" + pad2(now.getHours()) + "-" + pad2(now.getMinutes()) + "-" + pad2(now.getSeconds());
+      downloadAsFile(json, "evidence-" + dateTimeStr + ".json");
     });
   }
   if (fileRemoveAll) {

@@ -1136,6 +1136,21 @@ body {
   margin-bottom: 0;
 }
 
+.btn-details-delete {
+  padding: 0.25rem 0.5rem;
+  font: inherit;
+  font-size: 0.8rem;
+  color: var(--error);
+  background: transparent;
+  border: 1px solid var(--error);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-details-delete:hover {
+  background: rgba(248, 81, 73, 0.15);
+}
+
 .floating-panel[data-panel-id="add-event"] textarea {
   min-height: 3rem;
 }
@@ -1755,10 +1770,16 @@ textarea {
   display: none;
 }
 
-.event-details-close {
+.event-details-top-actions {
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.event-details-close {
   width: 2rem;
   height: 2rem;
   padding: 0;

@@ -97,7 +97,10 @@
         <button type="button" class="btn-panel-hide" id="btn-hide-details" aria-label="Hide panel">−</button>
       </div>
       <div class="panel-body event-details-body">
-        <button type="button" class="event-details-close" id="event-details-close" aria-label="Clear selection">×</button>
+        <div class="event-details-top-actions">
+          <button type="button" class="btn-details-delete" id="btn-details-delete" aria-label="Delete this evidence" hidden>Delete</button>
+          <button type="button" class="event-details-close" id="event-details-close" aria-label="Clear selection">×</button>
+        </div>
         <div id="event-details-content" class="event-details-content">
           <p class="event-details-placeholder">Empty state — click evidence on the timeline or in the Evidence list to view details.</p>
         </div>
@@ -123,6 +126,7 @@
         <button type="button" class="file-menu-item file-menu-item-tip" id="file-import-tip" aria-label="Tip about import file location" title="Import tip">?</button>
       </div>
       <button type="button" class="file-menu-item" id="file-download-template" role="menuitem">Download JSON Template</button>
+      <button type="button" class="file-menu-item" id="file-download-evidence" role="menuitem">Download Evidence</button>
       <button type="button" class="file-menu-item" id="file-clear-screen" role="menuitem">Clear Evidence</button>
       <button type="button" class="file-menu-item file-menu-item-danger" id="file-remove-all" role="menuitem">Remove all Evidence</button>
     </div>

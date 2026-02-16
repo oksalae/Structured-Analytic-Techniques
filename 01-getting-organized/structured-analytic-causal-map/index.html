@@ -621,6 +621,18 @@
       background: #3b82f6;
       border-color: #3b82f6;
     }
+    #comment-delete {
+      margin-right: auto;
+      padding: 8px 12px;
+      font-size: 13px;
+      border-radius: 6px;
+      border: 1px solid #991b1b;
+      background: #b91c1c;
+      color: #fff;
+      cursor: pointer;
+    }
+    #comment-delete:hover { background: #dc2626; border-color: #b91c1b; }
+    #comment-delete.hidden { display: none; }
     #comment-box {
       background: #252830;
       border: 1px solid #3a3f4b;
@@ -1138,6 +1150,7 @@
           <div id="comment-colors"></div>
         </div>
         <div id="comment-actions-row">
+          <button type="button" id="comment-delete" class="comment-delete">Delete</button>
           <button type="button" id="comment-btn-keywords" class="btn-keywords">Generate Keywords</button>
           <button type="button" class="evidence-info-tip" id="indicators-tip-comment" aria-label="Hypothesis keywords info" title="Hypothesis keywords info">?</button>
           <button type="button" id="comment-save-close" class="comment-save-close">Save</button>
@@ -2097,6 +2110,12 @@
       });
       commentColorsEl.appendChild(swatch);
     });
+    const commentDeleteBtn = document.getElementById('comment-delete');
+    if (node.id === tree.id) {
+      if (commentDeleteBtn) commentDeleteBtn.classList.add('hidden');
+    } else {
+      if (commentDeleteBtn) commentDeleteBtn.classList.remove('hidden');
+    }
     commentOverlay.classList.add('visible');
     commentDescriptionEl.focus();
   }
@@ -2169,6 +2188,21 @@
   });
 
   document.getElementById('comment-save-close').addEventListener('click', closeCommentPopup);
+
+  document.getElementById('comment-delete').addEventListener('click', () => {
+    const node = commentPopupNode;
+    if (!node || node.id === tree.id) return;
+    const pair = findParent(tree, node.id);
+    if (pair) {
+      const idx = pair.parent.children.indexOf(pair.node);
+      if (idx !== -1) pair.parent.children.splice(idx, 1);
+      commentPopupNode = null;
+      commentOverlay.classList.remove('visible');
+      selectedNodeId = null;
+      saveTree();
+      render();
+    }
+  });
 
   const KEYWORDS_STORAGE_KEY = 'osamuuttuja_keywords';
   const KEYWORD_ENTITIES = ['What', 'Who', 'When', 'Where', 'Why', 'How'];
