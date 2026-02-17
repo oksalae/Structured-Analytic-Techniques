@@ -1,41 +1,17 @@
 {
   "hypotheses": [
     {
-      "id": "hyp-1771184887578-ykpl0r",
-      "title": "NATO may build up icebreakers to better control Arctic routes."
-    },
-    {
-      "id": "hyp-1771184925546-nbjj57",
-      "title": "NATO may run more readiness exercises to improve route control in the Arctic."
-    },
-    {
-      "id": "hyp-1771184925992-tdv77q",
-      "title": "NATO may build up icebreakers to keep Arctic access secure."
-    },
-    {
-      "id": "hyp-1771184926312-w81eko",
-      "title": "NATO may build up icebreakers to strengthen deterrence in the Arctic."
-    },
-    {
-      "id": "hyp-1771184931950-ia6w8o",
-      "title": "NATO may run more readiness exercises to reinforce deterrence in the Arctic."
-    },
-    {
-      "id": "hyp-1771184937466-kul4y0",
-      "title": "NATO may run more readiness exercises to secure access in the Arctic."
-    },
-    {
-      "id": "hyp-1771184943284-b7xvx7",
-      "title": "NATO may deepen alliance integration to improve Arctic route control."
-    },
-    {
-      "id": "hyp-1771184954844-8tvk88",
-      "title": "NATO may deepen alliance integration to strengthen deterrence in the Arctic."
-    },
-    {
-      "id": "hyp-1771184964132-s696ws",
-      "title": "NATO may deepen alliance integration to secure Arctic access."
+      "id": "hyp-1771262816491-o8d0tr",
+      "title": "Lorem Ipsum",
+      "slot": "H1",
+      "description": "difjsoifjpasofimaid<pokd"
     }
   ],
-  "intelligence_requirement": "Long-term changes in regional security and military activity in the Arctic Sea region"
+  "intelligence_requirement": "Long-term changes in regional security and military activity in the Arctic Sea region",
+  "H1": {
+    "id": "H1",
+    "title": "Lorem Ipsum",
+    "description": "difjsoifjpasofimaid<pokd",
+    "hypothesisId": "hyp-1771262816491-o8d0tr"
+  }
 }

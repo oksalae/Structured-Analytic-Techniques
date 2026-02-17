@@ -1,0 +1,680 @@
+{
+  "id": "n_5dy50dpv_rzol1fv",
+  "name": "Long-term changes in regional security and military activity in the Arctic Sea region",
+  "depth": 0,
+  "evidence": "",
+  "children": [
+    {
+      "id": "n_zbix6dt2_6k80dvo",
+      "name": "Military posture and operations",
+      "depth": 1,
+      "evidence": "",
+      "children": [
+        {
+          "id": "n_ga0yjzkf_o12gtgi",
+          "name": "Alliance expansion and command structures",
+          "depth": 2,
+          "evidence": "",
+          "children": [
+            {
+              "id": "n_gkeklldx_2zqeney",
+              "name": "Finland accession",
+              "depth": 3,
+              "evidence": "",
+              "children": [
+                {
+                  "id": "n_ru58ijij_l05fpd5",
+                  "name": "Finland became a full member of NATO on",
+                  "depth": 4,
+                  "evidence": "Yes",
+                  "children": [],
+                  "color": "#2d3142",
+                  "description": "Finland became a full member of NATO on 2023-04-04.",
+                  "source": "https://www.nato.int/en/what-we-do/partnerships-and-cooperation/relations-with-finland",
+                  "date": "2023-04-04",
+                  "x": 1024.0133366433968,
+                  "y": -388.9623146087092,
+                  "time": "00:00"
+                }
+              ],
+              "color": "#6a4c93",
+              "description": "Intelligence Gap",
+              "x": 994.0152332875487,
+              "y": -186.38979569175635
+            },
+            {
+              "id": "n_09kujqwz_1dx3chc",
+              "name": "Sweden accession",
+              "depth": 3,
+              "evidence": "",
+              "children": [
+                {
+                  "id": "n_snuepeck_0cqtiql",
+                  "name": "Sweden became NATO’s newest member on 2024-03-07",
+                  "depth": 4,
+                  "evidence": "Yes",
+                  "children": [],
+                  "color": "#2d3142",
+                  "description": "Sweden became NATO’s newest member on 2024-03-07.",
+                  "source": "https://www.nato.int/en/news-and-events/articles/news/2024/03/07/sweden-officially-joins-nato",
+                  "date": "2024-03-07",
+                  "x": 1349.272278934521,
+                  "y": -3.8548870857910806,
+                  "time": "00:00"
+                }
+              ],
+              "color": "#6a4c93",
+              "description": "Intelligence Gap",
+              "x": 941.5492376013908,
+              "y": -16.35181941335032
+            },
+            {
+              "id": "n_v9dp8xhs_p7skeq8",
+              "name": "Arctic Sentry launch",
+              "depth": 3,
+              "evidence": "",
+              "children": [
+                {
+                  "id": "n_leth595w_3e7hl6p",
+                  "name": "NATO launched the Arctic Sentry initiative in February",
+                  "depth": 4,
+                  "evidence": "Yes",
+                  "children": [],
+                  "color": "#2d3142",
+                  "description": "NATO launched the “Arctic Sentry” initiative in February 2026 to strengthen its presence in the Arctic.",
+                  "source": "https://apnews.com/article/35855929d7709c60e1192bb6778df712",
+                  "date": "2026-02-11",
+                  "x": 643.3154547375789,
+                  "y": -380.38410168862384,
+                  "time": "00:00"
+                }
+              ],
+              "color": "#6a4c93",
+              "description": "Intelligence Gap",
+              "x": 649.1689339916038,
+              "y": -202.51779598247646
+            }
+          ],
+          "color": "#40916c",
+          "description": "Intelligence Gap",
+          "x": 575.5080587536266,
+          "y": 38.71671497453342
+        },
+        {
+          "id": "n_vt52h4vk_rdffq9l",
+          "name": "Large-scale exercises and readiness",
+          "depth": 2,
+          "evidence": "",
+          "children": [
+            {
+              "id": "n_lc26too1_up8e1wd",
+              "name": "Cold Response 2022",
+              "depth": 3,
+              "evidence": "",
+              "children": [
+                {
+                  "id": "n_g1wlbe0q_bow9z0x",
+                  "name": "Cold Response 2022 involved over 30 000 soldiers",
+                  "depth": 4,
+                  "evidence": "Yes",
+                  "children": [],
+                  "color": "#2d3142",
+                  "description": "Cold Response 2022 involved over 30,000 soldiers from 27 countries and ran from 2022-03-14 to 2022-03-31.",
+                  "source": "https://www.forsvaret.no/en/exercises-and-operations/exercises/cr22",
+                  "date": "2022-03-14",
+                  "x": 1219.7146896734057,
+                  "y": 358.5745402467005,
+                  "time": "00:00"
+                }
+              ],
+              "color": "#6a4c93",
+              "description": "Intelligence Gap",
+              "x": 875.823171391972,
+              "y": 320.1217872861933
+            }
+          ],
+          "color": "#40916c",
+          "description": "Intelligence Gap",
+          "x": 592.3309241649861,
+          "y": 237.02549378999828
+        },
+        {
+          "id": "n_icje6g2q_rgxi0iv",
+          "name": "Russia and China maritime-air activity near the Arctic",
+          "depth": 2,
+          "evidence": "",
+          "children": [
+            {
+              "id": "n_adak4h0s_znymgsl",
+              "name": "Near Alaska patrol",
+              "depth": 3,
+              "evidence": "",
+              "children": [
+                {
+                  "id": "n_18sbmpxe_9xzpag9",
+                  "name": "A joint Russian and Chinese flotilla operated near",
+                  "depth": 4,
+                  "evidence": "Yes",
+                  "children": [],
+                  "color": "#2d3142",
+                  "description": "A joint Russian and Chinese flotilla operated near Alaska and the Aleutian Islands in early August 2023, according to Alaska lawmakers cited by USNI News.",
+                  "source": "https://news.usni.org/2023/08/06/russian-chinese-warships-operated-near-alaska-say-senators",
+                  "date": "2023-08-06",
+                  "x": 922.9519170278744,
+                  "y": 743.4694033409118,
+                  "time": "00:00"
+                }
+              ],
+              "color": "#6a4c93",
+              "description": "Intelligence Gap",
+              "x": 758.0011818271595,
+              "y": 608.2081305588794
+            }
+          ],
+          "color": "#40916c",
+          "description": "Intelligence Gap",
+          "x": 553.7113675738965,
+          "y": 463.285148362683
+        }
+      ],
+      "color": "#8b5a2b",
+      "description": "Intelligence Gap",
+      "side": "down",
+      "x": 390.2814303377249,
+      "y": 159.72959668910124
+    },
+    {
+      "id": "n_1yv8bfru_45lx3pc",
+      "name": "Strategy and defense policy",
+      "depth": 1,
+      "evidence": "",
+      "children": [
+        {
+          "id": "n_z55reym7_wqh06dx",
+          "name": "United States and North America",
+          "depth": 2,
+          "evidence": "",
+          "children": [
+            {
+              "id": "n_69wrad2u_b2np049",
+              "name": "DoD Arctic Strategy",
+              "depth": 3,
+              "evidence": "",
+              "children": [
+                {
+                  "id": "n_saa6xja1_1cx42ki",
+                  "name": "The U S Department of Defense released its",
+                  "depth": 4,
+                  "evidence": "Yes",
+                  "children": [],
+                  "color": "#2d3142",
+                  "description": "The U.S. Department of Defense released its 2024 Arctic Strategy on 2024-07-22.",
+                  "source": "https://www.war.gov/News/Releases/Release/Article/3846206/dod-announces-publication-of-2024-arctic-strategy/",
+                  "date": "2024-07-22",
+                  "x": 562.819575031389,
+                  "y": 1084.570849360374,
+                  "time": "00:00"
+                }
+              ],
+              "color": "#6a4c93",
+              "description": "Intelligence Gap",
+              "x": 334.63757917045854,
+              "y": 863.5981364497309
+            },
+            {
+              "id": "n_vhegfh8c_1vg29zx",
+              "name": "NORAD modernization",
+              "depth": 3,
+              "evidence": "",
+              "children": [
+                {
+                  "id": "n_xm653uhg_w7sp6ud",
+                  "name": "Canada described a 38 6 billion plan announced",
+                  "depth": 4,
+                  "evidence": "Yes",
+                  "children": [],
+                  "color": "#2d3142",
+                  "description": "Canada described a $38.6 billion plan announced in 2022 to modernize NORAD over the next two decades.",
+                  "source": "https://www.canada.ca/en/department-national-defence/news/2025/07/national-defence-announces-progress-on-the-arctic-over-the-horizon-radar-project.html",
+                  "date": "2025-07-17",
+                  "x": 816.9802611658627,
+                  "y": 914.7123199192644,
+                  "time": "00:00"
+                }
+              ],
+              "color": "#6a4c93",
+              "description": "Intelligence Gap",
+              "x": 382.84090428097454,
+              "y": 692.4473395618186
+            },
+            {
+              "id": "n_vkeu0u3v_rt5bwot",
+              "name": "Arctic Security Cutters",
+              "depth": 3,
+              "evidence": "",
+              "children": [
+                {
+                  "id": "n_8q8y7sxr_ed6uq4h",
+                  "name": "The U S Coast Guard announced completion of",
+                  "depth": 4,
+                  "evidence": "Yes",
+                  "children": [],
+                  "color": "#2d3142",
+                  "description": "The U.S. Coast Guard announced completion of contract awards for 11 Arctic Security Cutters on 2026-02-11.",
+                  "source": "https://www.news.uscg.mil/Press-Releases/Article/4403354/us-coast-guard-completes-the-presidents-contract-awards-for-11-arctic-security/",
+                  "date": "2026-02-11",
+                  "x": 189.9192650620298,
+                  "y": 1176.973227844158,
+                  "time": "00:00"
+                }
+              ],
+              "color": "#6a4c93",
+              "description": "Intelligence Gap",
+              "x": 161.85653183756932,
+              "y": 1013.3540823211831
+            }
+          ],
+          "color": "#40916c",
+          "description": "Intelligence Gap",
+          "x": 128.98690548379534,
+          "y": 646.9540614513721
+        },
+        {
+          "id": "n_e4w5i4j2_dvxtvua",
+          "name": "Nordic and European approaches",
+          "depth": 2,
+          "evidence": "",
+          "children": [
+            {
+              "id": "n_nw4tdiwj_e6671z9",
+              "name": "Finnmark Brigade",
+              "depth": 3,
+              "evidence": "",
+              "children": [
+                {
+                  "id": "n_00s6nxyr_4vhetkn",
+                  "name": "Norway established the Finnmark Brigade on 2025-08-20",
+                  "depth": 4,
+                  "evidence": "Yes",
+                  "children": [],
+                  "color": "#2d3142",
+                  "description": "Norway established the Finnmark Brigade on 2025-08-20.",
+                  "source": "https://en.highnorthnews.com/politics/norway-establishes-new-brigade-in-the-north/186424",
+                  "date": "2025-08-20",
+                  "x": -145.68114190973955,
+                  "y": 1102.260533362396,
+                  "time": "00:00"
+                }
+              ],
+              "color": "#6a4c93",
+              "description": "Intelligence Gap",
+              "x": -126.56709619915324,
+              "y": 902.4841825080874
+            },
+            {
+              "id": "n_uk01d49z_hjo63pt",
+              "name": "France polar strategy",
+              "depth": 3,
+              "evidence": "",
+              "children": [
+                {
+                  "id": "n_j3eavaix_tubuxmn",
+                  "name": "France unveiled an updated polar strategy for 2026",
+                  "depth": 4,
+                  "evidence": "Yes",
+                  "children": [],
+                  "color": "#2d3142",
+                  "description": "France unveiled an updated polar strategy for 2026–2040 in December 2025.",
+                  "source": "https://www.lemonde.fr/en/environment/article/2025/12/04/france-is-updating-its-polar-strategy-amid-rising-geopolitical-tensions-in-the-arctic_6748129_114.html",
+                  "date": "2025-12-04",
+                  "x": -601.7219650087604,
+                  "y": 533.736101050298,
+                  "time": "00:00"
+                }
+              ],
+              "color": "#6a4c93",
+              "description": "Intelligence Gap",
+              "x": -270.338838047002,
+              "y": 569.6038746956588
+            }
+          ],
+          "color": "#40916c",
+          "description": "Intelligence Gap",
+          "x": -122.37593710122475,
+          "y": 648.4592861386591
+        },
+        {
+          "id": "n_w5ur312l_2g84tyj",
+          "name": "Russia Arctic posture signals",
+          "depth": 2,
+          "evidence": "",
+          "children": [
+            {
+              "id": "n_kelz1b65_bw7oit9",
+              "name": "Base runway upgrade",
+              "depth": 3,
+              "evidence": "",
+              "children": [],
+              "color": "#6a4c93",
+              "description": "Intelligence Gap",
+              "x": -398.58003263953765,
+              "y": 928.221487185647
+            }
+          ],
+          "color": "#40916c",
+          "description": "Intelligence Gap",
+          "x": -302.09151900336866,
+          "y": 790.5267628959255
+        }
+      ],
+      "color": "#8b5a2b",
+      "description": "Intelligence Gap",
+      "side": "down",
+      "x": -77.5878283692218,
+      "y": 475.2188628127576
+    },
+    {
+      "id": "n_at22baiw_wxooyr7",
+      "name": "Infrastructure, logistics, and domain awareness",
+      "depth": 1,
+      "evidence": "",
+      "children": [
+        {
+          "id": "n_fmemixe5_2a0cw31",
+          "name": "Icebreakers and maritime access",
+          "depth": 2,
+          "evidence": "",
+          "children": [
+            {
+              "id": "n_088rn7hs_dboklsq",
+              "name": "ICE Pact formed",
+              "depth": 3,
+              "evidence": "",
+              "children": [
+                {
+                  "id": "n_c97l8yoy_5ub11v3",
+                  "name": "Canada Finland and the United States formed the",
+                  "depth": 4,
+                  "evidence": "Yes",
+                  "children": [],
+                  "color": "#2d3142",
+                  "description": "Canada, Finland, and the United States formed the Icebreaker Collaboration Effort (ICE Pact) on 2024-07-11.",
+                  "source": "https://www.pm.gc.ca/en/news/backgrounders/2024/07/11/new-canada-finland-and-united-states-partnership",
+                  "date": "2024-07-11",
+                  "x": -729.2677925441209,
+                  "y": -666.1874400969057,
+                  "time": "00:00"
+                }
+              ],
+              "color": "#6a4c93",
+              "description": "Intelligence Gap",
+              "x": -572.332359886381,
+              "y": -573.3788517463762
+            },
+            {
+              "id": "n_ozt3s23b_e7m8rh9",
+              "name": "RMC icebreakers",
+              "depth": 3,
+              "evidence": "",
+              "children": [
+                {
+                  "id": "n_jb9u5dg6_w72vq7t",
+                  "name": "Finland’s Rauma Marine Constructions agreed to build two",
+                  "depth": 4,
+                  "evidence": "Yes",
+                  "children": [],
+                  "color": "#2d3142",
+                  "description": "Finland’s Rauma Marine Constructions agreed to build two icebreakers for the U.S. Coast Guard with delivery planned for 2028.",
+                  "source": "https://www.reuters.com/world/europe/finlands-rmc-build-two-icebreakers-us-coast-guard-2025-12-30/",
+                  "date": "2025-12-30",
+                  "x": -904.3905818585079,
+                  "y": -535.8721295164493,
+                  "time": "00:00"
+                }
+              ],
+              "color": "#6a4c93",
+              "description": "Intelligence Gap",
+              "x": -605.2918327913603,
+              "y": -447.60233347494034
+            },
+            {
+              "id": "n_n5nlpfn9_4vdiuen",
+              "name": "Sibir delivered",
+              "depth": 3,
+              "evidence": "",
+              "children": [
+                {
+                  "id": "n_2nkl1f4z_vmkbfo1",
+                  "name": "Russia’s nuclear-powered icebreaker Sibir was delivered to Atomflot",
+                  "depth": 4,
+                  "evidence": "Yes",
+                  "children": [],
+                  "color": "#2d3142",
+                  "description": "Russia’s nuclear-powered icebreaker Sibir was delivered to Atomflot on 2021-12-24.",
+                  "source": "https://jamestown.org/russia-considers-developing-a-new-fleet-in-the-arctic/",
+                  "date": "2021-12-24",
+                  "x": -654.1442674796992,
+                  "y": -62.62219521194656,
+                  "time": "00:00",
+                  "H1": "++",
+                  "H2": "+",
+                  "H3": "0",
+                  "H4": "-",
+                  "H5": "--",
+                  "analysis_description": "Foiasfjoasifaosifnasodvfnazdvap"
+                }
+              ],
+              "color": "#6a4c93",
+              "description": "Intelligence Gap",
+              "x": -622.930819178605,
+              "y": -198.71239909655912
+            }
+          ],
+          "color": "#40916c",
+          "description": "Intelligence Gap",
+          "x": -435.78387966872106,
+          "y": -348.4961835964106
+        },
+        {
+          "id": "n_g3v5fo0f_o19cr3l",
+          "name": "Bases, airfields, and communications",
+          "depth": 2,
+          "evidence": "",
+          "children": [
+            {
+              "id": "n_97swx92d_0tc7t8l",
+              "name": "Alexandra Land base",
+              "depth": 3,
+              "evidence": "",
+              "children": [],
+              "color": "#6a4c93",
+              "description": "Intelligence Gap",
+              "x": -52.4987024918332,
+              "y": -616.8933050666031
+            },
+            {
+              "id": "n_gspvd8e3_wzs4vqe",
+              "name": "A-OTHR sites",
+              "depth": 3,
+              "evidence": "",
+              "children": [
+                {
+                  "id": "n_06x99mfp_pny9kvs",
+                  "name": "Canada selected the first transmit and receive sites",
+                  "depth": 4,
+                  "evidence": "Yes",
+                  "children": [],
+                  "color": "#2d3142",
+                  "description": "Canada selected the first transmit and receive sites for its Arctic Over-the-Horizon Radar project on 2025-07-17.",
+                  "source": "https://www.canada.ca/en/department-national-defence/news/2025/07/national-defence-announces-progress-on-the-arctic-over-the-horizon-radar-project.html",
+                  "date": "2025-07-17",
+                  "x": -693.1276294511249,
+                  "y": -939.2701489001394,
+                  "time": "00:00"
+                }
+              ],
+              "color": "#6a4c93",
+              "description": "Intelligence Gap",
+              "x": -504.4116850889951,
+              "y": -774.979022878506
+            }
+          ],
+          "color": "#40916c",
+          "description": "Intelligence Gap",
+          "x": -326.58209742391807,
+          "y": -624.1313577438758
+        },
+        {
+          "id": "n_lgujqkp7_8twja25",
+          "name": "Northern Sea Route administrative control",
+          "depth": 2,
+          "evidence": "",
+          "children": [
+            {
+              "id": "n_x21xzquq_f4xaq9g",
+              "name": "NSR cargo record",
+              "depth": 3,
+              "evidence": "",
+              "children": [
+                {
+                  "id": "n_ci61ef1i_zyetdr6",
+                  "name": "Rosatom stated Northern Sea Route cargo carriage volume",
+                  "depth": 4,
+                  "evidence": "Yes",
+                  "children": [],
+                  "color": "#2d3142",
+                  "description": "Rosatom stated Northern Sea Route cargo carriage volume in 2023 exceeded 36.254 million tons.",
+                  "source": "https://www.rosatom.ru/en/press-centre/news/historical-record-of-the-northern-sea-route-the-cargo-carriage-volume-in-2023-exceeded-36-254-mln-to",
+                  "date": "2023-12-31",
+                  "x": -513.0877172272446,
+                  "y": -1048.409997775391,
+                  "time": "00:00"
+                }
+              ],
+              "color": "#6a4c93",
+              "description": "Intelligence Gap",
+              "x": -292.603067187601,
+              "y": -937.0414489536088
+            },
+            {
+              "id": "n_q5ha7hy2_x7dyv9i",
+              "name": "Russia legal position",
+              "depth": 3,
+              "evidence": "",
+              "children": [
+                {
+                  "id": "n_g1ncueuo_2ne3va9",
+                  "name": "Russia’s Foreign Ministry published a statement on the",
+                  "depth": 4,
+                  "evidence": "Yes",
+                  "children": [],
+                  "color": "#2d3142",
+                  "description": "Russia’s Foreign Ministry published a statement on the legal status of the Northern Sea Route on 2025-09-24.",
+                  "source": "https://mid.ru/en/foreign_policy/aktual_nyye_voprosy_mezhdunarodnogo_prava_pozitsiya_rossii/2048391/",
+                  "date": "2025-09-24",
+                  "x": 17.82919778156191,
+                  "y": -1083.0051759111811,
+                  "time": "00:00"
+                }
+              ],
+              "color": "#6a4c93",
+              "description": "Intelligence Gap",
+              "x": -55.67070590558758,
+              "y": -915.7536625411283
+            }
+          ],
+          "color": "#40916c",
+          "description": "Intelligence Gap",
+          "x": -253.34103031215363,
+          "y": -791.009705599482
+        }
+      ],
+      "color": "#8b5a2b",
+      "description": "Intelligence Gap",
+      "side": "down",
+      "x": -187.81509840098622,
+      "y": -418.9910478629812
+    },
+    {
+      "id": "n_uxf4sya7_llwebox",
+      "name": "Shipping, environment, and safety",
+      "depth": 1,
+      "evidence": "",
+      "children": [
+        {
+          "id": "n_b97dm6ko_y59p2in",
+          "name": "Traffic growth and operational load",
+          "depth": 2,
+          "evidence": "",
+          "children": [
+            {
+              "id": "n_tuui3iye_yh4mwf8",
+              "name": "NSR escorts count",
+              "depth": 3,
+              "evidence": "",
+              "children": [
+                {
+                  "id": "n_cv6660nr_brsh98x",
+                  "name": "World Nuclear News reported that in 2023 Russia’s",
+                  "depth": 4,
+                  "evidence": "Yes",
+                  "children": [],
+                  "color": "#2d3142",
+                  "description": "World Nuclear News reported that in 2023 Russia’s nuclear icebreakers provided more than 730 vessel support services on the Northern Sea Route.",
+                  "source": "https://www.world-nuclear-news.org/articles/nuclear-icebreakers-help-northern-sea-route-to-record-year",
+                  "date": "2023-12-31",
+                  "x": 267.1447545638247,
+                  "y": -625.7477548919983,
+                  "time": "00:00"
+                }
+              ],
+              "color": "#6a4c93",
+              "description": "Intelligence Gap",
+              "x": 524.2956172517456,
+              "y": -674.5476361139434
+            },
+            {
+              "id": "n_fv6gnbuu_14sstte",
+              "name": "Arctic traffic rise",
+              "depth": 3,
+              "evidence": "",
+              "children": [
+                {
+                  "id": "n_vlp66cxz_k7todbw",
+                  "name": "Reuters reported that Arctic Council data show Arctic",
+                  "depth": 4,
+                  "evidence": "Yes",
+                  "children": [],
+                  "color": "#2d3142",
+                  "description": "Reuters reported that Arctic Council data show Arctic shipping traffic rose by more than one-third between 2013 and 2023.",
+                  "source": "https://www.reuters.com/business/environment/new-shipping-fuel-requirements-arctic-risk-worse-oil-spills-report-says-2024-07-01/",
+                  "date": "2024-07-01",
+                  "x": 1324.6658881435624,
+                  "y": -516.3157882356027,
+                  "time": "00:00"
+                }
+              ],
+              "color": "#6a4c93",
+              "description": "Intelligence Gap",
+              "x": 981.7993249040123,
+              "y": -609.7988264897673
+            }
+          ],
+          "color": "#40916c",
+          "description": "Intelligence Gap",
+          "x": 530.515507358603,
+          "y": -539.2915824946211
+        }
+      ],
+      "color": "#8b5a2b",
+      "description": "Intelligence Gap",
+      "side": "down",
+      "x": 171.65241786483935,
+      "y": -307.74788581329057
+    }
+  ],
+  "color": "#e76f51",
+  "description": "Intelligence Gap",
+  "x": -3.942054556701711,
+  "y": -1.3140181855672366
+}
