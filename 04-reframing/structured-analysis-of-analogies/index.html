@@ -785,13 +785,15 @@
 
     let currentData = [];
     let currentFilename = '';
+    let collapsedRows = new Set();
     const STORAGE_KEY = 'sat-analogies-state';
 
     function saveState() {
       try {
         sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
           data: currentData,
-          filename: currentFilename
+          filename: currentFilename,
+          collapsed: Array.from(collapsedRows)
         }));
       } catch (_) { /* quota exceeded – ignore */ }
     }
@@ -802,6 +804,9 @@
         const raw = sessionStorage.getItem(STORAGE_KEY);
         if (!raw) return;
         const state = JSON.parse(raw);
+        if (Array.isArray(state.collapsed)) {
+          collapsedRows = new Set(state.collapsed);
+        }
         if (Array.isArray(state.data) && state.data.length) {
           loadBoard(state.data, state.filename || 'restored session');
         }
@@ -856,7 +861,8 @@
       data.forEach((entry, idx) => {
         const row = document.createElement('div');
         const isHypothesis = idx === 0;
-        row.className = 'board-row' + (isHypothesis ? ' hypothesis' : '');
+        const isCollapsed = collapsedRows.has(idx);
+        row.className = 'board-row' + (isHypothesis ? ' hypothesis' : '') + (isCollapsed ? ' collapsed' : '');
 
         const title       = entry['Title'] || '';
         const description = entry['Description'] || '';
@@ -869,7 +875,7 @@
         const notes       = entry['Notes'] || '';
 
         row.innerHTML =
-          `<button type="button" class="btn-collapse" title="Collapse / expand row">−</button>` +
+          `<button type="button" class="btn-collapse" title="Collapse / expand row">${isCollapsed ? '+' : '−'}</button>` +
           `<div class="cell cell-title" ${description ? 'data-description' : ''}>` +
             esc(title) +
             (isHypothesis ? `<div class="hypothesis-tag">Hypothesis</div>` : '') +
@@ -898,12 +904,15 @@
       });
 
       /* Collapse/expand toggle */
-      boardRows.querySelectorAll('.btn-collapse').forEach(btn => {
+      boardRows.querySelectorAll('.btn-collapse').forEach((btn, idx) => {
         btn.addEventListener('click', e => {
           e.stopPropagation();
           const row = btn.closest('.board-row');
           row.classList.toggle('collapsed');
-          btn.textContent = row.classList.contains('collapsed') ? '+' : '−';
+          const nowCollapsed = row.classList.contains('collapsed');
+          btn.textContent = nowCollapsed ? '+' : '−';
+          if (nowCollapsed) { collapsedRows.add(idx); } else { collapsedRows.delete(idx); }
+          saveState();
         });
       });
 
@@ -1143,6 +1152,7 @@
       fileInput.value = '';
       currentData = [];
       currentFilename = '';
+      collapsedRows = new Set();
       scenarioData = { who: [], what: [], when: [], why: [], how: [] };
       sessionStorage.removeItem(STORAGE_KEY);
       sessionStorage.removeItem(SCENARIO_STORAGE_KEY);
