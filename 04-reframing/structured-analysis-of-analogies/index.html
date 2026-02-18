@@ -1022,13 +1022,11 @@
 
     /* --- Save (overwrite original file with current state) --- */
     btnSave.addEventListener('click', () => {
-      const blob = new Blob([JSON.stringify(currentData, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = currentFilename || 'analogies.json';
-      a.click();
-      URL.revokeObjectURL(url);
+      saveState();
+      const orig = btnSave.textContent;
+      btnSave.textContent = '✓ Saved';
+      btnSave.disabled = true;
+      setTimeout(() => { btnSave.textContent = orig; btnSave.disabled = false; }, 1500);
     });
 
     /* --- Export (strips Sources) --- */
