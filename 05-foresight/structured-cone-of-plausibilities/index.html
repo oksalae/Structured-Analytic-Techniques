@@ -100,6 +100,15 @@
       overflow: hidden;
       text-overflow: ellipsis;
       line-height: 1.35;
+      flex: 1;
+    }
+    .trend-date {
+      flex-shrink: 0;
+      margin-left: 10px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      opacity: 0.7;
+      white-space: nowrap;
     }
 
     .scenario-panel {
@@ -205,6 +214,53 @@
       border-color: var(--accent);
       color: var(--text);
     }
+    .btn-assist {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 2px 10px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      text-decoration: none;
+      vertical-align: middle;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-assist:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .scenario-save-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .btn-save-scenario {
+      padding: 6px 18px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-save-scenario:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+    .scenario-saved-msg {
+      font-size: 0.78rem;
+      color: #3fb950;
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .scenario-saved-msg.show { opacity: 1; }
 
     /* Modal overlay & panel */
     .modal-overlay {
@@ -313,6 +369,228 @@
     }
     .modal-btn.primary:hover { background: #79b8ff; border-color: #79b8ff; }
 
+    .hyp-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .btn-view-hyp {
+      padding: 3px 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .btn-view-hyp:hover { border-color: var(--accent); color: var(--text); }
+
+    .hyp-popup-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 200;
+      justify-content: center;
+      align-items: center;
+    }
+    .hyp-popup-overlay.open { display: flex; }
+    .hyp-popup {
+      background: #1e2a3a;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      width: 420px;
+      max-width: 92vw;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 22px 24px 18px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    .hyp-popup-ir {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.4;
+    }
+    .hyp-popup-ir span {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 3px;
+    }
+    .hyp-item {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .hyp-item:last-child { border-bottom: none; }
+    .hyp-item-slot {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 2px;
+    }
+    .hyp-item-title {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .hyp-item-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+      line-height: 1.35;
+    }
+    .hyp-popup-close {
+      display: block;
+      margin: 12px auto 0;
+      padding: 6px 20px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .hyp-popup-close:hover { border-color: var(--accent); color: var(--text); }
+
+    .content-layout {
+      display: flex;
+      gap: 28px;
+      align-items: flex-start;
+    }
+    .content-main { flex: 1; min-width: 0; }
+    .content-sidebar {
+      width: 340px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 32px;
+      max-height: calc(100vh - 64px);
+      overflow-y: auto;
+    }
+    .generated-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+    }
+    .generated-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--border);
+    }
+    .generated-panel-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .btn-expand-generated {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      transition: border-color 0.15s, color 0.15s;
+      flex-shrink: 0;
+    }
+    .btn-expand-generated:hover { border-color: var(--accent); color: var(--accent); }
+
+    .gen-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 150;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 24px;
+      overflow-y: auto;
+    }
+    .gen-modal-overlay.open { display: flex; }
+    .gen-modal-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 800px;
+      padding: 28px 36px 24px;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+    }
+    .gen-modal-panel .generated-type-label { font-size: 0.9rem; }
+    .gen-modal-panel .generated-driver-name { font-size: 0.78rem; }
+    .gen-modal-panel .generated-text { font-size: 0.88rem; line-height: 1.5; }
+    .gen-modal-panel .generated-empty { font-size: 0.84rem; }
+    .gen-modal-close {
+      display: block;
+      margin: 20px auto 0;
+      padding: 7px 24px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.84rem;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .gen-modal-close:hover { border-color: var(--accent); color: var(--text); }
+    .generated-type-group {
+      margin-bottom: 16px;
+    }
+    .generated-type-group:last-child { margin-bottom: 0; }
+    .generated-type-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .generated-entry {
+      margin-bottom: 8px;
+      padding-left: 10px;
+      border-left: 2px solid var(--border);
+    }
+    .generated-entry:last-child { margin-bottom: 0; }
+    .generated-driver-name {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 1px;
+    }
+    .generated-text {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      white-space: pre-wrap;
+    }
+    .generated-empty {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      font-style: italic;
+      opacity: 0.4;
+      padding-left: 10px;
+    }
+
     #content { display: none; }
     .loading {
       color: var(--text-muted);
@@ -323,18 +601,31 @@
 </head>
 <body>
   <div class="toolbar">
-    <a class="back-link" href="http://localhost:3000" style="margin-bottom:0">&larr; Back to Hub</a>
+    <a class="back-link" href="http://localhost:3000" style="margin-bottom:0">&larr; Back to Main Screen</a>
     <button class="btn-import" id="btnReadFile" type="button">&#8635; Read from File</button>
   </div>
   <p class="loading" id="loadingMsg">Loading drivers and trends&hellip;</p>
 
   <div id="content">
-    <div class="columns-header">
-      <div class="col-title">Drivers</div>
-      <div class="col-title">Trends</div>
-      <div class="col-title">Scenarios</div>
+    <div class="content-layout">
+      <div class="content-main">
+        <div class="columns-header">
+          <div class="col-title">Drivers</div>
+          <div class="col-title">Trends</div>
+          <div class="col-title">Scenario Generation <a href="https://chatgpt.com/g/g-69963f07809c8191b528296b10d0f9eb-cone-of-plausibility-agent" target="_blank" rel="noopener" class="btn-assist">Scenario Assistance</a></div>
+        </div>
+        <div id="rows"></div>
+      </div>
+      <div class="content-sidebar">
+        <div class="generated-panel">
+          <div class="generated-panel-header">
+            <div class="generated-panel-title">Generated Scenarios</div>
+            <button class="btn-expand-generated" id="btnExpandGen" type="button" title="Expand">&#128269;</button>
+          </div>
+          <div id="generatedContent"></div>
+        </div>
+      </div>
     </div>
-    <div id="rows"></div>
   </div>
 
   <div class="modal-overlay" id="trendModal">
@@ -368,7 +659,10 @@
         </div>
       </div>
 
-      <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.4px;">Hypothesis Ratings</label>
+      <div class="hyp-header">
+        <label style="font-size:0.78rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.4px;margin:0;">Hypothesis Ratings</label>
+        <button class="btn-view-hyp" id="btnViewHyp" type="button">View Active Hypotheses</button>
+      </div>
       <div class="modal-h-row">
         <div class="modal-field"><label for="mH1">H1</label><select id="mH1"><option value="">-</option><option>++</option><option>+</option><option>0</option><option>-</option><option>--</option><option>N/A</option></select></div>
         <div class="modal-field"><label for="mH2">H2</label><select id="mH2"><option value="">-</option><option>++</option><option>+</option><option>0</option><option>-</option><option>--</option><option>N/A</option></select></div>
@@ -389,8 +683,24 @@
     </div>
   </div>
 
+  <div class="hyp-popup-overlay" id="hypPopup">
+    <div class="hyp-popup">
+      <div class="hyp-popup-ir" id="hypIR"></div>
+      <div id="hypList"></div>
+      <button class="hyp-popup-close" id="hypClose" type="button">Close</button>
+    </div>
+  </div>
+
+  <div class="gen-modal-overlay" id="genModal">
+    <div class="gen-modal-panel">
+      <div class="generated-panel-title" style="margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--border);">Generated Scenarios</div>
+      <div id="genModalContent"></div>
+      <button class="gen-modal-close" id="genModalClose" type="button">Close</button>
+    </div>
+  </div>
+
   <script>
-    var scenariosByTrend = {};
+    var scenariosByDriver = {};
     var driversData = [];
     var saveTimer = null;
     var currentRoot = null;
@@ -403,16 +713,14 @@
         .then(function (arr) {
           if (!Array.isArray(arr)) return;
           arr.forEach(function (driverObj) {
-            (driverObj.trends || []).forEach(function (trendObj) {
-              if (trendObj.trend_id) {
-                scenariosByTrend[trendObj.trend_id] = {
-                  baseline:     trendObj.scenarios.baseline     || '',
-                  plausible:    trendObj.scenarios.plausible    || '',
-                  wildcard:     trendObj.scenarios.wildcard     || '',
-                  preposterous: trendObj.scenarios.preposterous || ''
-                };
-              }
-            });
+            if (driverObj.driver_id && driverObj.scenarios) {
+              scenariosByDriver[driverObj.driver_id] = {
+                baseline:     driverObj.scenarios.baseline     || '',
+                plausible:    driverObj.scenarios.plausible    || '',
+                wildcard:     driverObj.scenarios.wildcard     || '',
+                preposterous: driverObj.scenarios.preposterous || ''
+              };
+            }
           });
         })
         .catch(function () {});
@@ -420,43 +728,48 @@
 
     function buildOutputJson() {
       return driversData.map(function (d) {
+        var s = scenariosByDriver[d.id] || { baseline: '', plausible: '', wildcard: '', preposterous: '' };
         return {
           driver_id:   d.id,
           driver_name: d.name,
           trends: d.trends.map(function (t) {
-            var s = scenariosByTrend[t.id] || { baseline: '', plausible: '', wildcard: '', preposterous: '' };
-            return {
-              trend_id:   t.id,
-              trend_name: t.name,
-              scenarios: {
-                baseline:     s.baseline,
-                plausible:    s.plausible,
-                wildcard:     s.wildcard,
-                preposterous: s.preposterous
-              }
-            };
-          })
+            var obj = { trend_id: t.id, trend_name: t.name };
+            if (t.description) obj.description = t.description;
+            if (t.source) obj.source = t.source;
+            if (t.date) obj.date = t.date;
+            if (t.evidence) obj.evidence = t.evidence;
+            return obj;
+          }),
+          scenarios: {
+            baseline:     s.baseline,
+            plausible:    s.plausible,
+            wildcard:     s.wildcard,
+            preposterous: s.preposterous
+          }
         };
       });
     }
 
-    function persistToServer() {
-      clearTimeout(saveTimer);
-      saveTimer = setTimeout(function () {
-        var json = JSON.stringify(buildOutputJson(), null, 2);
-        fetch('/api/save-scenarios', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: json
-        }).catch(function () {});
-      }, 400);
+    function persistToServer(feedbackEl) {
+      var json = JSON.stringify(buildOutputJson(), null, 2);
+      fetch('/api/save-scenarios', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: json
+      }).then(function () {
+        if (feedbackEl) {
+          feedbackEl.classList.add('show');
+          setTimeout(function () { feedbackEl.classList.remove('show'); }, 2000);
+        }
+        refreshGeneratedScenarios();
+      }).catch(function () {});
     }
 
-    function getTrendScenarios(trendId) {
-      if (!scenariosByTrend[trendId]) {
-        scenariosByTrend[trendId] = { baseline: '', plausible: '', wildcard: '', preposterous: '' };
+    function getDriverScenarios(driverId) {
+      if (!scenariosByDriver[driverId]) {
+        scenariosByDriver[driverId] = { baseline: '', plausible: '', wildcard: '', preposterous: '' };
       }
-      return scenariosByTrend[trendId];
+      return scenariosByDriver[driverId];
     }
 
     function getMaxDepth(node) {
@@ -481,25 +794,25 @@
     }
 
     var SCENARIO_DEFS = [
-      { key: 'baseline',     label: 'Baseline Scenario',     help: 'Describe how this will happen with the current trend.' },
-      { key: 'plausible',    label: 'Plausible Scenario',    help: 'Might happen.' },
-      { key: 'wildcard',     label: 'Wild Card Scenario',    help: 'Could happen, but unlikely.' },
-      { key: 'preposterous', label: 'Preposterous Scenario', help: "Won't ever happen." }
+      { key: 'baseline',     label: 'Baseline Scenario',     help: 'Shows what is most likely to happen if today\u2019s trends continue without major surprises.' },
+      { key: 'plausible',    label: 'Plausible Scenario',    help: 'Describes a realistic future that could happen based on credible drivers and evidence.' },
+      { key: 'wildcard',     label: 'Wild Card Scenario',    help: 'Explores a future shaped by a low-probability but high-impact surprise event.' },
+      { key: 'preposterous', label: 'Preposterous Scenario', help: 'Imagines an intentionally extreme or unlikely future to challenge assumptions and spark new ideas.' }
     ];
 
-    function buildScenarioPanel(trendId) {
+    function buildScenarioPanel(driverId) {
       var panel = document.createElement('div');
       panel.className = 'scenario-panel';
 
-      if (!trendId) {
+      if (!driverId) {
         var msg = document.createElement('div');
         msg.className = 'no-trend';
-        msg.textContent = 'Select a trend to enter scenarios.';
+        msg.textContent = 'No driver selected.';
         panel.appendChild(msg);
         return panel;
       }
 
-      var data = getTrendScenarios(trendId);
+      var data = getDriverScenarios(driverId);
 
       SCENARIO_DEFS.forEach(function (def) {
         var group = document.createElement('div');
@@ -531,7 +844,6 @@
         textarea.placeholder = def.label + '\u2026';
         textarea.addEventListener('input', function () {
           data[def.key] = textarea.value;
-          persistToServer();
         });
 
         group.appendChild(label);
@@ -539,7 +851,67 @@
         panel.appendChild(group);
       });
 
+      var saveRow = document.createElement('div');
+      saveRow.className = 'scenario-save-row';
+      var saveBtn = document.createElement('button');
+      saveBtn.className = 'btn-save-scenario';
+      saveBtn.type = 'button';
+      saveBtn.textContent = 'Save Scenarios';
+      var savedMsg = document.createElement('span');
+      savedMsg.className = 'scenario-saved-msg';
+      savedMsg.textContent = 'Saved!';
+      saveBtn.addEventListener('click', function () {
+        persistToServer(savedMsg);
+      });
+      saveRow.appendChild(saveBtn);
+      saveRow.appendChild(savedMsg);
+      panel.appendChild(saveRow);
+
       return panel;
+    }
+
+    function refreshGeneratedScenarios() {
+      var container = document.getElementById('generatedContent');
+      container.innerHTML = '';
+      var TYPES = [
+        { key: 'baseline',     label: 'Baseline Scenario' },
+        { key: 'plausible',    label: 'Plausible Scenario' },
+        { key: 'wildcard',     label: 'Wild Card Scenario' },
+        { key: 'preposterous', label: 'Preposterous Scenario' }
+      ];
+      TYPES.forEach(function (type) {
+        var group = document.createElement('div');
+        group.className = 'generated-type-group';
+        var lbl = document.createElement('div');
+        lbl.className = 'generated-type-label';
+        lbl.textContent = type.label;
+        group.appendChild(lbl);
+        var hasAny = false;
+        driversData.forEach(function (d) {
+          var s = scenariosByDriver[d.id];
+          var text = s ? (s[type.key] || '').trim() : '';
+          if (!text) return;
+          hasAny = true;
+          var entry = document.createElement('div');
+          entry.className = 'generated-entry';
+          var name = document.createElement('div');
+          name.className = 'generated-driver-name';
+          name.textContent = d.name;
+          var content = document.createElement('div');
+          content.className = 'generated-text';
+          content.textContent = text;
+          entry.appendChild(name);
+          entry.appendChild(content);
+          group.appendChild(entry);
+        });
+        if (!hasAny) {
+          var empty = document.createElement('div');
+          empty.className = 'generated-empty';
+          empty.textContent = 'No entries yet';
+          group.appendChild(empty);
+        }
+        container.appendChild(group);
+      });
     }
 
     function openTrendPopup(node, cardEl) {
@@ -623,6 +995,67 @@
       }
     });
 
+    document.getElementById('btnViewHyp').addEventListener('click', function (e) {
+      e.stopPropagation();
+      fetch('/data/hypothesis.json')
+        .then(function (r) { return r.ok ? r.json() : Promise.reject('fetch failed'); })
+        .then(function (data) {
+          var irEl = document.getElementById('hypIR');
+          irEl.innerHTML = '<span>Intelligence Requirement</span>';
+          irEl.appendChild(document.createTextNode(data.intelligence_requirement || '(none)'));
+
+          var listEl = document.getElementById('hypList');
+          listEl.innerHTML = '';
+          var slots = ['H1','H2','H3','H4','H5'];
+          slots.forEach(function (key) {
+            var h = data[key];
+            if (!h) return;
+            var item = document.createElement('div');
+            item.className = 'hyp-item';
+            var slot = document.createElement('div');
+            slot.className = 'hyp-item-slot';
+            slot.textContent = key;
+            var title = document.createElement('div');
+            title.className = 'hyp-item-title';
+            title.textContent = h.title || '(untitled)';
+            item.appendChild(slot);
+            item.appendChild(title);
+            if (h.description) {
+              var desc = document.createElement('div');
+              desc.className = 'hyp-item-desc';
+              desc.textContent = h.description;
+              item.appendChild(desc);
+            }
+            listEl.appendChild(item);
+          });
+
+          document.getElementById('hypPopup').classList.add('open');
+        })
+        .catch(function () {
+          alert('Could not load hypothesis.json');
+        });
+    });
+
+    document.getElementById('hypClose').addEventListener('click', function () {
+      document.getElementById('hypPopup').classList.remove('open');
+    });
+    document.getElementById('hypPopup').addEventListener('click', function (e) {
+      if (e.target === this) this.classList.remove('open');
+    });
+
+    document.getElementById('btnExpandGen').addEventListener('click', function () {
+      var target = document.getElementById('genModalContent');
+      var source = document.getElementById('generatedContent');
+      target.innerHTML = source.innerHTML;
+      document.getElementById('genModal').classList.add('open');
+    });
+    document.getElementById('genModalClose').addEventListener('click', function () {
+      document.getElementById('genModal').classList.remove('open');
+    });
+    document.getElementById('genModal').addEventListener('click', function (e) {
+      if (e.target === this) this.classList.remove('open');
+    });
+
     function render(root) {
       currentRoot = root;
       var rowsEl = document.getElementById('rows');
@@ -650,12 +1083,7 @@
         trendsCol.className = 'trends-stack';
 
         var scenarioContainer = document.createElement('div');
-        var selectedTrendId = trends.length > 0 ? trends[0].id : null;
-
-        function refreshScenario() {
-          while (scenarioContainer.firstChild) scenarioContainer.removeChild(scenarioContainer.firstChild);
-          scenarioContainer.appendChild(buildScenarioPanel(selectedTrendId));
-        }
+        scenarioContainer.appendChild(buildScenarioPanel(driver.id));
 
         if (trends.length === 0) {
           var empty = document.createElement('div');
@@ -670,18 +1098,20 @@
             span.className = 'trend-text';
             span.textContent = t.name;
             card.appendChild(span);
+            if (t.date) {
+              var dateSpan = document.createElement('span');
+              dateSpan.className = 'trend-date';
+              dateSpan.textContent = t.date;
+              card.appendChild(dateSpan);
+            }
             card.addEventListener('click', function () {
               trendsCol.querySelectorAll('.trend-card').forEach(function (c) { c.classList.remove('selected'); });
               card.classList.add('selected');
-              selectedTrendId = t.id;
-              refreshScenario();
               openTrendPopup(t, card);
             });
             trendsCol.appendChild(card);
           });
         }
-
-        refreshScenario();
 
         row.appendChild(driverCol);
         row.appendChild(trendsCol);
@@ -691,6 +1121,7 @@
 
       document.getElementById('loadingMsg').style.display = 'none';
       document.getElementById('content').style.display = 'block';
+      refreshGeneratedScenarios();
     }
 
     document.addEventListener('click', function () {
@@ -711,7 +1142,7 @@
     }
 
     document.getElementById('btnReadFile').addEventListener('click', function () {
-      scenariosByTrend = {};
+      scenariosByDriver = {};
       driversData = [];
       fetchAndRender();
     });

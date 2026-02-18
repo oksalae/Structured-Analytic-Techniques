@@ -38,7 +38,8 @@
                   "H2": "--",
                   "H1": "++",
                   "analysis_description": "This evidence indicates tightened border governance and movement restrictions on Finland’s eastern border (Finland closed its border with Russia in late 2023).",
-                  "H5": "-"
+                  "H5": "-",
+                  "date": ""
                 }
               ],
               "color": "#6a4c93",
@@ -808,7 +809,8 @@
                   "H3": "++",
                   "H4": "0",
                   "H5": "0",
-                  "analysis_description": "This evidence indicates increased Finnish Defence Forces readiness, training, or capability development near the border (production of Finland’s first F-35A fighters began in the latter)."
+                  "analysis_description": "This evidence indicates increased Finnish Defence Forces readiness, training, or capability development near the border (production of Finland’s first F-35A fighters began in the latter).",
+                  "date": ""
                 }
               ],
               "color": "#6a4c93",
@@ -838,7 +840,8 @@
                   "H3": "++",
                   "H4": "0",
                   "H5": "0",
-                  "analysis_description": "This evidence indicates increased Finnish Defence Forces readiness, training, or capability development near the border (Finland has contracted the manufacturing lots 17 22 for its)."
+                  "analysis_description": "This evidence indicates increased Finnish Defence Forces readiness, training, or capability development near the border (Finland has contracted the manufacturing lots 17 22 for its).",
+                  "date": ""
                 }
               ],
               "color": "#6a4c93",
@@ -1222,7 +1225,8 @@
                   "H3": "0",
                   "H4": "++",
                   "H5": "0",
-                  "analysis_description": "This evidence indicates deepening international defence cooperation and NATO-related activity affecting Finland and the region (Test-1)."
+                  "analysis_description": "This evidence indicates deepening international defence cooperation and NATO-related activity affecting Finland and the region (Test-1).",
+                  "source": ""
                 },
                 {
                   "id": "n_mlsd3gu3_1uwn028",
