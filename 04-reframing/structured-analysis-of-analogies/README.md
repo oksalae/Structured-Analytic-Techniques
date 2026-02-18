@@ -28,7 +28,7 @@ The tool displays each analogy as a horizontal row on a kanban board with seven 
 - Session persistence — page refreshes preserve the current state
 - Save and export functionality for downstream analysis
 
-## JSON Format
+## JSON Format 
 
 The tool expects an array of objects. The first object is the hypothesis; all subsequent objects are analogies.
 
