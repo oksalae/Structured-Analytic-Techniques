@@ -144,6 +144,90 @@
       white-space: nowrap;
     }
     .toolbar-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .toolbar-btn-save {
+      color: #fff;
+      background: #238636;
+      border-color: #238636;
+    }
+    .toolbar-btn-save:hover { background: #2ea043; border-color: #2ea043; color: #fff; }
+
+    /* Scoreboard */
+    .scoreboard {
+      display: none;
+      padding: 0.9rem 1.25rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .scoreboard.visible { display: block; }
+    .scoreboard-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .scoreboard-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+    .scoreboard-toggle {
+      padding: 0.2rem 0.5rem;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .scoreboard-toggle:hover { border-color: var(--accent); color: var(--accent); }
+    .scoreboard.collapsed .scoreboard-list { display: none; }
+    .scoreboard.collapsed .scoreboard-header { margin-bottom: 0; }
+    .scoreboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .scoreboard-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .scoreboard-bar-wrap {
+      flex: 1;
+      height: 18px;
+      background: var(--bg);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+    .scoreboard-bar {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+      min-width: 0;
+    }
+    .scoreboard-name {
+      font-size: 0.78rem;
+      color: var(--text);
+      width: 260px;
+      min-width: 160px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .scoreboard-name.is-hypothesis {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .scoreboard-pts {
+      font-size: 0.75rem;
+      font-weight: 700;
+      min-width: 32px;
+      text-align: right;
+    }
 
     /* Board grid */
     .board {
@@ -158,9 +242,9 @@
     /* Column headers */
     .board-header {
       display: grid;
-      grid-template-columns: 28px 200px 130px 1fr 1fr 1fr 1fr 1fr 200px;
+      grid-template-columns: 28px 200px 130px 1fr 1fr 1fr 1fr 1fr;
       gap: 10px;
-      min-width: 1230px;
+      min-width: 1030px;
       margin-bottom: 10px;
       position: sticky;
       top: 0;
@@ -183,14 +267,13 @@
     .col-head-when    { background: var(--col-when);     color: #e3b341; }
     .col-head-why     { background: var(--col-why);      color: #f778ba; }
     .col-head-how     { background: var(--col-how);      color: #56d4dd; }
-    .col-head-notes   { background: var(--col-notes);   color: #8b949e; }
 
     /* Row */
     .board-row {
       display: grid;
-      grid-template-columns: 28px 200px 130px 1fr 1fr 1fr 1fr 1fr 200px;
+      grid-template-columns: 28px 200px 130px 1fr 1fr 1fr 1fr 1fr;
       gap: 10px;
-      min-width: 1230px;
+      min-width: 1030px;
       margin-bottom: 10px;
     }
 
@@ -238,8 +321,6 @@
       transition: border-color 0.15s;
     }
     .cell:hover { border-color: var(--accent); }
-    .cell-notes { cursor: default; }
-    .cell-notes:hover { border-color: var(--border); }
     .cell-title {
       font-weight: 600;
       border-left: 3px solid #3fb950;
@@ -262,32 +343,10 @@
     .cell-how {
       border-left: 3px solid #56d4dd;
     }
-    .cell-notes {
-      border-left: 3px solid #8b949e;
-    }
     .cell-empty {
       color: var(--text-muted);
       font-style: italic;
     }
-
-    /* Editable notes textarea */
-    .notes-area {
-      width: 100%;
-      min-height: 60px;
-      padding: 0.45rem 0.55rem;
-      font-family: inherit;
-      font-size: 0.82rem;
-      line-height: 1.45;
-      color: var(--text);
-      background: var(--surface-alt);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      resize: vertical;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .notes-area:focus { border-color: var(--accent); }
-    .notes-area::placeholder { color: var(--text-muted); }
 
     /* First row – hypothesis (grayed out) */
     .board-row.hypothesis .cell {
@@ -304,11 +363,6 @@
     .board-row.hypothesis .cell-when    { border-left-color: var(--text-muted); }
     .board-row.hypothesis .cell-why     { border-left-color: var(--text-muted); }
     .board-row.hypothesis .cell-how     { border-left-color: var(--text-muted); }
-    .board-row.hypothesis .cell-notes   { border-left-color: var(--text-muted); }
-    .board-row.hypothesis .notes-area {
-      color: var(--text-muted);
-      background: #161c24;
-    }
     .hypothesis-tag {
       display: inline-block;
       margin-top: 0.3rem;
@@ -322,212 +376,90 @@
       border-radius: 3px;
     }
 
-    /* + button on 5WH cells */
-    .cell-5wh {
+    /* Help button on column headers */
+    .col-head {
       position: relative;
     }
-    .btn-use {
-      display: none;
+    .btn-help {
       position: absolute;
-      top: 4px;
       right: 4px;
-      width: 22px;
-      height: 22px;
-      padding: 0;
-      font-size: 1rem;
-      line-height: 1;
-      color: var(--text-muted);
-      background: var(--surface-alt);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      cursor: pointer;
-      align-items: center;
-      justify-content: center;
-      transition: border-color 0.15s, color 0.15s;
-      z-index: 5;
-    }
-    .cell-5wh:hover .btn-use { display: flex; }
-    .btn-use:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* Scenario edit popup */
-    .scenario-edit-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 110;
-      background: rgba(0,0,0,0.6);
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-    }
-    .scenario-edit-overlay.open { display: flex; }
-    .scenario-edit-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      width: 100%;
-      max-width: 520px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-    }
-    .scenario-edit-header {
+      top: 50%;
+      transform: translateY(-50%);
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 0.9rem 1.15rem 0.65rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .scenario-edit-title {
-      font-size: 0.95rem;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      padding: 0;
+      font-size: 0.6rem;
       font-weight: 700;
-    }
-    .scenario-edit-source {
-      font-size: 0.75rem;
+      line-height: 1;
       color: var(--text-muted);
-      margin-top: 0.15rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
     }
-    .scenario-edit-body { padding: 0.9rem 1.15rem 1.15rem; }
-    .scenario-edit-label {
-      display: block;
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin-bottom: 0.35rem;
-    }
-    .scenario-edit-textarea {
-      width: 100%;
-      min-height: 100px;
-      padding: 0.55rem 0.65rem;
-      font-family: inherit;
-      font-size: 0.88rem;
-      line-height: 1.5;
+    .btn-help:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Help tooltip popup */
+    .help-tip {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 30;
+      width: 220px;
+      padding: 0.5rem 0.65rem;
+      font-size: 0.78rem;
+      font-weight: 400;
+      line-height: 1.45;
+      text-transform: none;
+      letter-spacing: 0;
       color: var(--text);
       background: var(--surface-alt);
       border: 1px solid var(--border);
-      border-radius: 6px;
-      resize: vertical;
-      outline: none;
-      transition: border-color 0.2s;
+      border-radius: var(--radius);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+      white-space: normal;
+      text-align: left;
     }
-    .scenario-edit-textarea:focus { border-color: var(--accent); }
-    .scenario-edit-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 0.6rem;
-      margin-top: 1rem;
-    }
-    .scenario-edit-cancel,
-    .scenario-edit-confirm {
-      padding: 0.4rem 0.85rem;
-      font-size: 0.82rem;
-      border-radius: 6px;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      transition: border-color 0.15s, color 0.15s, background 0.15s;
-    }
-    .scenario-edit-cancel {
-      color: var(--text-muted);
-      background: transparent;
-    }
-    .scenario-edit-cancel:hover { border-color: var(--text); color: var(--text); }
-    .scenario-edit-confirm {
-      color: #fff;
-      background: #238636;
-      border-color: #238636;
-    }
-    .scenario-edit-confirm:hover { background: #2ea043; border-color: #2ea043; }
+    .help-tip.open { display: block; }
 
-    /* Scenario zone */
-    .scenario-zone {
-      display: none;
-      padding: 0 1.25rem 2rem;
-      overflow-x: auto;
-    }
-    .scenario-zone.visible { display: block; }
-    .scenario-zone-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-      color: #3fb950;
-    }
-    .scenario-header {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 10px;
-      min-width: 900px;
-      margin-bottom: 10px;
-    }
-    .scenario-col-head {
-      padding: 0.5rem 0.65rem;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      border-radius: var(--radius) var(--radius) 0 0;
-      text-align: center;
-    }
-    .scenario-lanes {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 10px;
-      min-width: 900px;
-      align-items: start;
-    }
-    .scenario-lane {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-height: 60px;
-      padding: 8px;
-      background: var(--surface);
-      border: 1px dashed var(--border);
-      border-radius: 6px;
-    }
-    .scenario-item {
+    /* Score button on scorable cells */
+    .cell-scorable {
       position: relative;
-      padding: 0.55rem 2rem 0.55rem 0.65rem;
-      font-size: 0.82rem;
-      line-height: 1.45;
-      background: var(--surface-alt);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      overflow-wrap: break-word;
-      word-break: break-word;
     }
-    .scenario-item-source {
-      display: block;
-      margin-top: 0.25rem;
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      font-style: italic;
-    }
-    .btn-remove-scenario {
+    .btn-score {
       position: absolute;
       top: 4px;
       right: 4px;
       width: 20px;
       height: 20px;
       padding: 0;
-      font-size: 0.9rem;
+      font-size: 0.75rem;
       line-height: 1;
       color: var(--text-muted);
-      background: var(--surface);
+      background: var(--surface-alt);
       border: 1px solid var(--border);
       border-radius: 4px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: border-color 0.15s, color 0.15s;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+      z-index: 5;
     }
-    .btn-remove-scenario:hover { border-color: #f85149; color: #f85149; }
-    .scenario-lane-empty {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      font-style: italic;
-      text-align: center;
-      padding: 0.5rem;
+    .btn-score:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-score.scored {
+      color: #3fb950;
+      border-color: #3fb950;
+      background: #3fb95018;
     }
+    .btn-score.scored:hover { color: #f85149; border-color: #f85149; background: #f8514918; }
+
 
     /* Description tooltip */
     .cell-title[data-description] { position: relative; cursor: help; }
@@ -657,11 +589,42 @@
       border-top: 1px solid var(--border);
       margin: 0.1rem 0;
     }
+    .detail-notes-textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 0.55rem 0.65rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      color: var(--text);
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .detail-notes-textarea:focus { border-color: var(--accent); }
+    .detail-notes-textarea::placeholder { color: var(--text-muted); }
+    .detail-save {
+      display: block;
+      margin-top: 0.75rem;
+      margin-left: auto;
+      padding: 0.4rem 1rem;
+      font-size: 0.82rem;
+      color: #fff;
+      background: #238636;
+      border: 1px solid #238636;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .detail-save:hover { background: #2ea043; }
 
     /* Responsive */
     @media (max-width: 1300px) {
       .board-header, .board-row {
-        grid-template-columns: 28px 180px 110px repeat(5, 1fr) 180px;
+        grid-template-columns: 28px 180px 110px repeat(5, 1fr);
       }
       .board-row.collapsed {
         grid-template-columns: 28px 1fr;
@@ -674,10 +637,10 @@
   <header class="page-header">
     <a class="btn-back" href="http://localhost:3000/" aria-label="Back to main screen">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-      Hub
+      Back to Main Screen
     </a>
     <h1 class="page-title">Structured Analysis of Analogies</h1>
-    <p class="page-subtitle">Upload a JSON file of structured analogies. Each entry is displayed as a kanban row for side-by-side comparison.</p>
+    <p class="page-subtitle">Upload the JSON from the Collection and Processor AI Agents, then rank the most similar analogies in relation to the hypothesis.</p>
   </header>
 
   <!-- Upload screen -->
@@ -697,63 +660,33 @@
   <!-- Toolbar -->
   <div class="toolbar" id="toolbar">
     <span class="toolbar-info" id="toolbar-info"></span>
-    <button type="button" class="toolbar-btn" id="btn-export">Export JSON (with notes)</button>
+    <button type="button" class="toolbar-btn toolbar-btn-save" id="btn-save">Save</button>
+    <button type="button" class="toolbar-btn" id="btn-export">Export JSON</button>
     <button type="button" class="toolbar-btn" id="btn-new">Load another file</button>
+  </div>
+
+  <!-- Scoreboard -->
+  <div class="scoreboard" id="scoreboard">
+    <div class="scoreboard-header">
+      <div class="scoreboard-title">Analogy Similarity Scores</div>
+      <button type="button" class="scoreboard-toggle" id="scoreboard-toggle">Hide</button>
+    </div>
+    <div class="scoreboard-list" id="scoreboard-list"></div>
   </div>
 
   <!-- Board -->
   <div class="board" id="board">
     <div class="board-header">
       <div></div>
-      <div class="col-head col-head-title">Title</div>
-      <div class="col-head col-head-country">Country</div>
-      <div class="col-head col-head-who">Who?</div>
-      <div class="col-head col-head-what">What?</div>
-      <div class="col-head col-head-when">When?</div>
-      <div class="col-head col-head-why">Why?</div>
-      <div class="col-head col-head-how">How?</div>
-      <div class="col-head col-head-notes">Notes</div>
+      <div class="col-head col-head-title">Title <button type="button" class="btn-help" data-help="How similar is the overall theme or nature of this event to the hypothesis?">?</button><div class="help-tip"></div></div>
+      <div class="col-head col-head-country">Country <button type="button" class="btn-help" data-help="How similar is the country or regional context to the hypothesis?">?</button><div class="help-tip"></div></div>
+      <div class="col-head col-head-who">Who? <button type="button" class="btn-help" data-help="How similar are the actors and targets to those in the hypothesis?">?</button><div class="help-tip"></div></div>
+      <div class="col-head col-head-what">What? <button type="button" class="btn-help" data-help="How similar is what happened to what the hypothesis describes?">?</button><div class="help-tip"></div></div>
+      <div class="col-head col-head-when">When? <button type="button" class="btn-help" data-help="How similar is the timing or tempo of events to the hypothesis?">?</button><div class="help-tip"></div></div>
+      <div class="col-head col-head-why">Why? <button type="button" class="btn-help" data-help="How similar are the underlying causes or motivations to the hypothesis?">?</button><div class="help-tip"></div></div>
+      <div class="col-head col-head-how">How? <button type="button" class="btn-help" data-help="How similar are the mechanisms or methods of escalation to the hypothesis?">?</button><div class="help-tip"></div></div>
     </div>
     <div id="board-rows"></div>
-  </div>
-
-  <!-- Scenario zone -->
-  <div class="scenario-zone" id="scenario-zone">
-    <div class="scenario-zone-title">Scenario Builder</div>
-    <div class="scenario-header">
-      <div class="scenario-col-head" style="background:var(--col-who);color:#d2a8ff;">Who?</div>
-      <div class="scenario-col-head" style="background:var(--col-what);color:#f78148;">What?</div>
-      <div class="scenario-col-head" style="background:var(--col-when);color:#e3b341;">When?</div>
-      <div class="scenario-col-head" style="background:var(--col-why);color:#f778ba;">Why?</div>
-      <div class="scenario-col-head" style="background:var(--col-how);color:#56d4dd;">How?</div>
-    </div>
-    <div class="scenario-lanes">
-      <div class="scenario-lane" data-cat="who"  id="scenario-who"></div>
-      <div class="scenario-lane" data-cat="what" id="scenario-what"></div>
-      <div class="scenario-lane" data-cat="when" id="scenario-when"></div>
-      <div class="scenario-lane" data-cat="why"  id="scenario-why"></div>
-      <div class="scenario-lane" data-cat="how"  id="scenario-how"></div>
-    </div>
-  </div>
-
-  <!-- Scenario edit popup -->
-  <div class="scenario-edit-overlay" id="scenario-edit-overlay">
-    <div class="scenario-edit-box">
-      <div class="scenario-edit-header">
-        <div>
-          <div class="scenario-edit-title" id="scenario-edit-title"></div>
-          <div class="scenario-edit-source" id="scenario-edit-source"></div>
-        </div>
-      </div>
-      <div class="scenario-edit-body">
-        <label class="scenario-edit-label" id="scenario-edit-label" for="scenario-edit-textarea"></label>
-        <textarea class="scenario-edit-textarea" id="scenario-edit-textarea"></textarea>
-        <div class="scenario-edit-actions">
-          <button type="button" class="scenario-edit-cancel" id="scenario-edit-cancel">Cancel</button>
-          <button type="button" class="scenario-edit-confirm" id="scenario-edit-confirm">Use as Scenario</button>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- Detail modal -->
@@ -773,8 +706,11 @@
     const fileInput     = document.getElementById('file-input');
     const toolbar       = document.getElementById('toolbar');
     const toolbarInfo   = document.getElementById('toolbar-info');
+    const scoreboard    = document.getElementById('scoreboard');
+    const scoreboardList = document.getElementById('scoreboard-list');
     const board         = document.getElementById('board');
     const boardRows     = document.getElementById('board-rows');
+    const btnSave       = document.getElementById('btn-save');
     const btnExport     = document.getElementById('btn-export');
     const btnNew        = document.getElementById('btn-new');
     const detailOverlay = document.getElementById('detail-overlay');
@@ -800,7 +736,6 @@
 
     function restoreState() {
       try {
-        restoreScenarioState();
         const raw = sessionStorage.getItem(STORAGE_KEY);
         if (!raw) return;
         const state = JSON.parse(raw);
@@ -846,6 +781,62 @@
       reader.readAsText(file);
     }
 
+    const scoreboardToggle = document.getElementById('scoreboard-toggle');
+
+    scoreboardToggle.addEventListener('click', () => {
+      scoreboard.classList.toggle('collapsed');
+      scoreboardToggle.textContent = scoreboard.classList.contains('collapsed') ? 'Show' : 'Hide';
+    });
+
+    /* Help tip toggle on ? buttons */
+    document.querySelectorAll('.btn-help').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const tip = btn.parentElement.querySelector('.help-tip');
+        const isOpen = tip.classList.contains('open');
+        document.querySelectorAll('.help-tip.open').forEach(t => t.classList.remove('open'));
+        if (!isOpen) {
+          tip.textContent = btn.dataset.help;
+          tip.classList.add('open');
+        }
+      });
+    });
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.help-tip.open').forEach(t => t.classList.remove('open'));
+    });
+
+    const SCORE_FIELDS = ['Title', 'Country', 'WHO', 'WHAT', 'WHEN', 'WHY', 'HOW'];
+    const BAR_COLORS = ['#3fb950', '#58a6ff', '#d2a8ff', '#f78148', '#e3b341', '#f778ba', '#56d4dd'];
+
+    function renderScoreboard() {
+      scoreboardList.innerHTML = '';
+      if (!currentData.length) { scoreboard.classList.remove('visible'); return; }
+
+      const entries = currentData
+        .map((entry, idx) => {
+          if (!entry._scores) entry._scores = {};
+          const total = SCORE_FIELDS.reduce((s, f) => s + (entry._scores[f] ? 1 : 0), 0);
+          return { title: entry['Title'] || '(untitled)', total, idx };
+        })
+        .filter(e => e.idx !== 0);
+
+      entries.sort((a, b) => b.total - a.total);
+
+      entries.forEach(e => {
+        const pct = Math.round((e.total / 7) * 100);
+        const color = pct > 0 ? BAR_COLORS[Math.min(Math.floor(e.total) - 1, BAR_COLORS.length - 1)] : 'transparent';
+        const row = document.createElement('div');
+        row.className = 'scoreboard-row';
+        row.innerHTML =
+          `<span class="scoreboard-name${e.idx === 0 ? ' is-hypothesis' : ''}">${esc(e.title)}</span>` +
+          `<div class="scoreboard-bar-wrap"><div class="scoreboard-bar" style="width:${pct}%;background:${color};"></div></div>` +
+          `<span class="scoreboard-pts" style="color:${e.total > 0 ? color : 'var(--text-muted)'}">${e.total}/7</span>`;
+        scoreboardList.appendChild(row);
+      });
+
+      scoreboard.classList.add('visible');
+    }
+
     /* --- Render board --- */
     function esc(str) {
       const d = document.createElement('div');
@@ -863,6 +854,7 @@
         const isHypothesis = idx === 0;
         const isCollapsed = collapsedRows.has(idx);
         row.className = 'board-row' + (isHypothesis ? ' hypothesis' : '') + (isCollapsed ? ' collapsed' : '');
+        row.dataset.idx = idx;
 
         const title       = entry['Title'] || '';
         const description = entry['Description'] || '';
@@ -872,35 +864,31 @@
         const when        = entry['WHEN did it happen?'] || '';
         const why         = entry['WHY did this happen?'] || '';
         const how         = entry['HOW did it happen?'] || '';
-        const notes       = entry['Notes'] || '';
+
+        if (!entry._scores) entry._scores = {};
+        const sc = entry._scores;
+
+        function scoreBtn(field) {
+          const on = sc[field] ? ' scored' : '';
+          return `<button type="button" class="btn-score${on}" data-row="${idx}" data-field="${field}">${sc[field] ? '✓' : '+'}</button>`;
+        }
 
         row.innerHTML =
           `<button type="button" class="btn-collapse" title="Collapse / expand row">${isCollapsed ? '+' : '−'}</button>` +
-          `<div class="cell cell-title" ${description ? 'data-description' : ''}>` +
+          `<div class="cell cell-title cell-scorable" ${description ? 'data-description' : ''}>` +
+            scoreBtn('Title') +
             esc(title) +
             (isHypothesis ? `<div class="hypothesis-tag">Hypothesis</div>` : '') +
             (description ? `<div class="desc-tooltip">${esc(description)}</div>` : '') +
           `</div>` +
-          `<div class="cell cell-country${!country ? ' cell-empty' : ''}">${country ? esc(country) : '—'}</div>` +
-          `<div class="cell cell-who cell-5wh${!who ? ' cell-empty' : ''}" data-cat="who" data-row="${idx}"><button type="button" class="btn-use" title="Use as scenario">+</button>${who ? esc(who) : '—'}</div>` +
-          `<div class="cell cell-what cell-5wh${!what ? ' cell-empty' : ''}" data-cat="what" data-row="${idx}"><button type="button" class="btn-use" title="Use as scenario">+</button>${what ? esc(what) : '—'}</div>` +
-          `<div class="cell cell-when cell-5wh${!when ? ' cell-empty' : ''}" data-cat="when" data-row="${idx}"><button type="button" class="btn-use" title="Use as scenario">+</button>${when ? esc(when) : '—'}</div>` +
-          `<div class="cell cell-why cell-5wh${!why ? ' cell-empty' : ''}" data-cat="why" data-row="${idx}"><button type="button" class="btn-use" title="Use as scenario">+</button>${why ? esc(why) : '—'}</div>` +
-          `<div class="cell cell-how cell-5wh${!how ? ' cell-empty' : ''}" data-cat="how" data-row="${idx}"><button type="button" class="btn-use" title="Use as scenario">+</button>${how ? esc(how) : '—'}</div>` +
-          `<div class="cell cell-notes">` +
-            `<textarea class="notes-area" data-idx="${idx}" placeholder="Add notes…">${esc(notes)}</textarea>` +
-          `</div>`;
+          `<div class="cell cell-country cell-scorable${!country ? ' cell-empty' : ''}">${scoreBtn('Country')}${country ? esc(country) : '—'}</div>` +
+          `<div class="cell cell-who cell-scorable${!who ? ' cell-empty' : ''}">${scoreBtn('WHO')}${who ? esc(who) : '—'}</div>` +
+          `<div class="cell cell-what cell-scorable${!what ? ' cell-empty' : ''}">${scoreBtn('WHAT')}${what ? esc(what) : '—'}</div>` +
+          `<div class="cell cell-when cell-scorable${!when ? ' cell-empty' : ''}">${scoreBtn('WHEN')}${when ? esc(when) : '—'}</div>` +
+          `<div class="cell cell-why cell-scorable${!why ? ' cell-empty' : ''}">${scoreBtn('WHY')}${why ? esc(why) : '—'}</div>` +
+          `<div class="cell cell-how cell-scorable${!how ? ' cell-empty' : ''}">${scoreBtn('HOW')}${how ? esc(how) : '—'}</div>`;
 
         boardRows.appendChild(row);
-      });
-
-      /* Bind note changes back to data */
-      boardRows.querySelectorAll('.notes-area').forEach(ta => {
-        ta.addEventListener('input', () => {
-          const i = parseInt(ta.dataset.idx, 10);
-          currentData[i]['Notes'] = ta.value;
-          saveState();
-        });
       });
 
       /* Collapse/expand toggle */
@@ -916,29 +904,30 @@
         });
       });
 
-      /* Click any cell (except notes textarea, + button, collapse button) to open detail */
-      boardRows.querySelectorAll('.board-row').forEach(row => {
-        row.addEventListener('click', e => {
-          if (e.target.closest('.notes-area')) return;
-          if (e.target.closest('.btn-use')) return;
-          if (e.target.closest('.btn-collapse')) return;
-          const idx = parseInt(row.querySelector('.notes-area').dataset.idx, 10);
-          openDetail(idx);
+      /* Score toggle buttons */
+      boardRows.querySelectorAll('.btn-score').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          const rowIdx = parseInt(btn.dataset.row, 10);
+          const field = btn.dataset.field;
+          const entry = currentData[rowIdx];
+          if (!entry._scores) entry._scores = {};
+          entry._scores[field] = entry._scores[field] ? 0 : 1;
+          const isOn = !!entry._scores[field];
+          btn.textContent = isOn ? '✓' : '+';
+          btn.classList.toggle('scored', isOn);
+          renderScoreboard();
+          saveState();
         });
       });
 
-      /* + button opens scenario edit popup */
-      boardRows.querySelectorAll('.btn-use').forEach(btn => {
-        btn.addEventListener('click', e => {
-          e.stopPropagation();
-          const cell = btn.closest('.cell-5wh');
-          const cat = cell.dataset.cat;
-          const rowIdx = parseInt(cell.dataset.row, 10);
-          const keyMap = { who: 'WHO was the target?', what: 'WHAT happened?', when: 'WHEN did it happen?', why: 'WHY did this happen?', how: 'HOW did it happen?' };
-          const labelMap = { who: 'Who?', what: 'What?', when: 'When?', why: 'Why?', how: 'How?' };
-          const entry = currentData[rowIdx];
-          const text = entry[keyMap[cat]] || '';
-          openScenarioEdit(cat, text, entry['Title'] || '(untitled)', labelMap[cat]);
+      /* Click any cell (except score button, collapse button) to open detail */
+      boardRows.querySelectorAll('.board-row').forEach(row => {
+        row.addEventListener('click', e => {
+          if (e.target.closest('.btn-score')) return;
+          if (e.target.closest('.btn-collapse')) return;
+          const idx = parseInt(row.dataset.idx, 10);
+          openDetail(idx);
         });
       });
 
@@ -947,14 +936,17 @@
       board.classList.add('visible');
       const analogyCount = Math.max(0, data.length - 1);
       toolbarInfo.textContent = `${filename} — 1 hypothesis + ${analogyCount} analog${analogyCount === 1 ? 'y' : 'ies'}`;
-      renderScenario();
+      renderScoreboard();
       saveState();
     }
 
     /* --- Detail modal --- */
+    let openDetailIdx = -1;
+
     function openDetail(idx) {
       const entry = currentData[idx];
       if (!entry) return;
+      openDetailIdx = idx;
 
       detailTitle.innerHTML = esc(entry['Title'] || '(untitled)') +
         (idx === 0 ? ' <span class="hypothesis-tag">Hypothesis</span>' : '');
@@ -968,7 +960,6 @@
         { key: 'WHY did this happen?',   label: 'Why did this happen?', cls: 'why' },
         { key: 'HOW did it happen?',     label: 'How did it happen?',  cls: 'how' },
         { key: 'Sources',               label: 'Sources',             cls: 'sources', isList: true },
-        { key: 'Notes',                 label: 'Notes',               cls: 'notes' },
       ];
 
       let html = '';
@@ -998,7 +989,22 @@
         }
       });
 
+      html += '<hr class="detail-sep">';
+      html += `<div class="detail-field">` +
+        `<span class="detail-label detail-label-notes">Notes</span>` +
+        `<textarea class="detail-notes-textarea" id="detail-notes-input" placeholder="Add notes…">${esc(entry['Notes'] || '')}</textarea>` +
+        `<button type="button" class="detail-save" id="detail-save-btn">Save</button>` +
+        `</div>`;
+
       detailBody.innerHTML = html;
+
+      document.getElementById('detail-save-btn').addEventListener('click', () => {
+        const ta = document.getElementById('detail-notes-input');
+        currentData[openDetailIdx]['Notes'] = ta.value;
+        saveState();
+        closeDetail();
+      });
+
       detailOverlay.classList.add('open');
     }
 
@@ -1011,118 +1017,21 @@
       if (e.target === detailOverlay) closeDetail();
     });
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') {
-        if (scenarioEditOverlay.classList.contains('open')) { closeScenarioEdit(); return; }
-        if (detailOverlay.classList.contains('open')) closeDetail();
-      }
+      if (e.key === 'Escape' && detailOverlay.classList.contains('open')) closeDetail();
     });
 
-    /* --- Scenario edit popup --- */
-    const scenarioEditOverlay  = document.getElementById('scenario-edit-overlay');
-    const scenarioEditTitle    = document.getElementById('scenario-edit-title');
-    const scenarioEditSource   = document.getElementById('scenario-edit-source');
-    const scenarioEditLabel    = document.getElementById('scenario-edit-label');
-    const scenarioEditTextarea = document.getElementById('scenario-edit-textarea');
-    const scenarioEditCancel   = document.getElementById('scenario-edit-cancel');
-    const scenarioEditConfirm  = document.getElementById('scenario-edit-confirm');
-    const scenarioZone         = document.getElementById('scenario-zone');
-
-    const SCENARIO_STORAGE_KEY = 'sat-analogies-scenario';
-    let scenarioData = { who: [], what: [], when: [], why: [], how: [] };
-    let pendingCat = null;
-
-    const catLabelColors = { who: '#d2a8ff', what: '#f78148', when: '#e3b341', why: '#f778ba', how: '#56d4dd' };
-
-    function openScenarioEdit(cat, text, sourceTitle, label) {
-      pendingCat = cat;
-      scenarioEditTitle.textContent = label;
-      scenarioEditTitle.style.color = catLabelColors[cat] || '';
-      scenarioEditSource.textContent = 'From: ' + sourceTitle;
-      scenarioEditLabel.textContent = label + ' — edit before adding';
-      scenarioEditLabel.style.color = catLabelColors[cat] || '';
-      scenarioEditTextarea.value = text;
-      scenarioEditOverlay.classList.add('open');
-      setTimeout(() => scenarioEditTextarea.focus(), 50);
-    }
-
-    function closeScenarioEdit() {
-      scenarioEditOverlay.classList.remove('open');
-      pendingCat = null;
-    }
-
-    scenarioEditCancel.addEventListener('click', closeScenarioEdit);
-    scenarioEditOverlay.addEventListener('click', e => {
-      if (e.target === scenarioEditOverlay) closeScenarioEdit();
+    /* --- Save (overwrite original file with current state) --- */
+    btnSave.addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(currentData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = currentFilename || 'analogies.json';
+      a.click();
+      URL.revokeObjectURL(url);
     });
 
-    scenarioEditConfirm.addEventListener('click', () => {
-      if (!pendingCat) return;
-      const text = scenarioEditTextarea.value.trim();
-      if (!text) { closeScenarioEdit(); return; }
-      const source = scenarioEditSource.textContent.replace(/^From:\s*/, '');
-      scenarioData[pendingCat].push({ text, source });
-      closeScenarioEdit();
-      renderScenario();
-      saveScenarioState();
-    });
-
-    function renderScenario() {
-      const cats = ['who', 'what', 'when', 'why', 'how'];
-      let hasAny = false;
-
-      cats.forEach(cat => {
-        const lane = document.getElementById('scenario-' + cat);
-        lane.innerHTML = '';
-        const items = scenarioData[cat] || [];
-        if (items.length) hasAny = true;
-
-        if (items.length === 0) {
-          lane.innerHTML = '<div class="scenario-lane-empty">Click + on an analogy above</div>';
-          return;
-        }
-
-        items.forEach((item, i) => {
-          const el = document.createElement('div');
-          el.className = 'scenario-item';
-          el.innerHTML =
-            `<button type="button" class="btn-remove-scenario" data-cat="${cat}" data-i="${i}" title="Remove">−</button>` +
-            esc(item.text) +
-            `<span class="scenario-item-source">${esc(item.source)}</span>`;
-          lane.appendChild(el);
-        });
-      });
-
-      scenarioZone.classList.toggle('visible', true);
-
-      scenarioZone.querySelectorAll('.btn-remove-scenario').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const cat = btn.dataset.cat;
-          const i = parseInt(btn.dataset.i, 10);
-          scenarioData[cat].splice(i, 1);
-          renderScenario();
-          saveScenarioState();
-        });
-      });
-    }
-
-    function saveScenarioState() {
-      try {
-        sessionStorage.setItem(SCENARIO_STORAGE_KEY, JSON.stringify(scenarioData));
-      } catch (_) {}
-    }
-
-    function restoreScenarioState() {
-      try {
-        const raw = sessionStorage.getItem(SCENARIO_STORAGE_KEY);
-        if (!raw) return;
-        const parsed = JSON.parse(raw);
-        if (parsed && typeof parsed === 'object') {
-          scenarioData = { who: [], what: [], when: [], why: [], how: [], ...parsed };
-        }
-      } catch (_) {}
-    }
-
-    /* --- Export (preserves edited notes, strips Sources) --- */
+    /* --- Export (strips Sources) --- */
     btnExport.addEventListener('click', () => {
       const output = currentData.map(entry => {
         const clone = {};
@@ -1137,7 +1046,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'analogies-with-notes.json';
+      a.download = 'analogies-export.json';
       a.click();
       URL.revokeObjectURL(url);
     });
@@ -1146,16 +1055,14 @@
     btnNew.addEventListener('click', () => {
       board.classList.remove('visible');
       toolbar.classList.remove('visible');
-      scenarioZone.classList.remove('visible');
+      scoreboard.classList.remove('visible');
       uploadArea.style.display = '';
       boardRows.innerHTML = '';
       fileInput.value = '';
       currentData = [];
       currentFilename = '';
       collapsedRows = new Set();
-      scenarioData = { who: [], what: [], when: [], why: [], how: [] };
       sessionStorage.removeItem(STORAGE_KEY);
-      sessionStorage.removeItem(SCENARIO_STORAGE_KEY);
     });
 
     /* --- Restore previous session on page load --- */
