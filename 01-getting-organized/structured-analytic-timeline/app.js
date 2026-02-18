@@ -1176,7 +1176,11 @@
 
   function hideDetailsPanel() {
     activeEventId = null;
+    var btnDetailsEdit = document.getElementById("btn-details-edit");
+    var btnDetailsSource = document.getElementById("btn-details-source");
     var btnDetailsDelete = document.getElementById("btn-details-delete");
+    if (btnDetailsEdit) btnDetailsEdit.hidden = true;
+    if (btnDetailsSource) btnDetailsSource.hidden = true;
     if (btnDetailsDelete) btnDetailsDelete.hidden = true;
     if (eventDetailsContent) {
       eventDetailsContent.innerHTML = "<p class=\"event-details-placeholder\">Empty state — click evidence on the timeline or in the Evidence list to view details.</p>";
@@ -1196,9 +1200,7 @@
       return;
     }
     var displayIndex = getDisplayIndexForId(activeEventId);
-    var sourceInlineHtml = evt.source && String(evt.source).trim()
-      ? ' <a class="event-details-source-link" href="' + escapeHtml(evt.source) + '" target="_blank" rel="noopener noreferrer">[Source]</a>'
-      : "";
+    var sourceInlineHtml = "";
     var dateTimeHtml = '<p class="event-details-datetime">' + escapeHtml(formatDisplayTime(evt.time || "")) + "</p>";
     var evidenceChecked = evt.evidence === "Yes";
     var evidenceHtml = '<div class="evidence-row-wrap">' +
@@ -1215,7 +1217,11 @@
       dateTimeHtml +
       '<div class="event-details-description">' + escapeHtml(evt.description || "") + sourceInlineHtml + "</div>" +
       evidenceHtml;
+    var btnDetailsEdit = document.getElementById("btn-details-edit");
+    var btnDetailsSource = document.getElementById("btn-details-source");
     var btnDetailsDelete = document.getElementById("btn-details-delete");
+    if (btnDetailsEdit) btnDetailsEdit.hidden = false;
+    if (btnDetailsSource) btnDetailsSource.hidden = !(evt.source && String(evt.source).trim());
     if (btnDetailsDelete) btnDetailsDelete.hidden = false;
     var detailsEvidenceCheckbox = document.getElementById("details-evidence");
     if (detailsEvidenceCheckbox) {
@@ -1641,6 +1647,23 @@
   if (btnDetailsDelete) {
     btnDetailsDelete.addEventListener("click", function () {
       if (activeEventId) deleteEvent(activeEventId);
+    });
+  }
+  var btnDetailsEdit = document.getElementById("btn-details-edit");
+  if (btnDetailsEdit) {
+    btnDetailsEdit.addEventListener("click", function () {
+      if (activeEventId) startEdit(activeEventId);
+    });
+  }
+  var btnDetailsSource = document.getElementById("btn-details-source");
+  if (btnDetailsSource) {
+    btnDetailsSource.addEventListener("click", function () {
+      if (!activeEventId) return;
+      var events = loadEvents();
+      var evt = events.find(function (e) { return e.id === activeEventId; });
+      if (evt && evt.source && String(evt.source).trim()) {
+        window.open(evt.source, "_blank", "noopener,noreferrer");
+      }
     });
   }
   document.addEventListener("keydown", function (e) {

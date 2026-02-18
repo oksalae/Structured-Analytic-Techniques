@@ -1136,20 +1136,6 @@ body {
   margin-bottom: 0;
 }
 
-.btn-details-delete {
-  padding: 0.25rem 0.5rem;
-  font: inherit;
-  font-size: 0.8rem;
-  color: var(--error);
-  background: transparent;
-  border: 1px solid var(--error);
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.btn-details-delete:hover {
-  background: rgba(248, 81, 73, 0.15);
-}
 
 .floating-panel[data-panel-id="add-event"] textarea {
   min-height: 3rem;
@@ -1777,6 +1763,51 @@ textarea {
   display: flex;
   align-items: center;
   gap: 0.35rem;
+}
+
+.btn-details-action {
+  padding: 0.2rem 0.45rem;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-details-action:hover {
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+
+.btn-details-action.btn-details-edit {
+  color: #2d6a4f;
+  border-color: #2d6a4f;
+}
+
+.btn-details-action.btn-details-edit:hover {
+  background: rgba(45, 106, 79, 0.12);
+}
+
+.btn-details-action.btn-details-source {
+  color: #1d6fa5;
+  border-color: #1d6fa5;
+}
+
+.btn-details-action.btn-details-source:hover {
+  background: rgba(29, 111, 165, 0.12);
+}
+
+.btn-details-action.btn-details-delete {
+  color: var(--error);
+  border-color: var(--error);
+}
+
+.btn-details-action.btn-details-delete:hover {
+  background: rgba(248, 81, 73, 0.15);
 }
 
 .event-details-close {

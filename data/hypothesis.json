@@ -1,17 +1,72 @@
 {
   "hypotheses": [
     {
-      "id": "hyp-1771262816491-o8d0tr",
-      "title": "Lorem Ipsum",
+      "id": "hyp-1771441426627-m5cm6j",
+      "title": "Lorem Ipsum"
+    },
+    {
+      "id": "hyp-1771441429377-hi4yqk",
+      "title": "AAA"
+    },
+    {
+      "id": "hyp-1771441443099-g2ojl9",
+      "title": "agaewrbga"
+    },
+    {
+      "id": "hyp-1771441450939-j6uh4u",
+      "title": "Hypo1",
       "slot": "H1",
-      "description": "difjsoifjpasofimaid<pokd"
+      "description": "Hypo1"
+    },
+    {
+      "id": "hyp-1771441454777-fv9kcd",
+      "title": "Hypo2",
+      "slot": "H2",
+      "description": "Hypo2"
+    },
+    {
+      "id": "hyp-1771441458530-knls8c",
+      "title": "Hypo3",
+      "slot": "H3",
+      "description": "Hypo3"
+    },
+    {
+      "id": "hyp-1771441463259-z05cm6",
+      "title": "Hypo4",
+      "slot": "H4",
+      "description": "Hypo4"
+    },
+    {
+      "id": "hyp-1771441466735-zf679p",
+      "title": "Hypo5",
+      "slot": "H5",
+      "description": "Hypo5"
     }
   ],
-  "intelligence_requirement": "Long-term changes in regional security and military activity in the Arctic Sea region",
   "H1": {
     "id": "H1",
-    "title": "Lorem Ipsum",
-    "description": "difjsoifjpasofimaid<pokd",
-    "hypothesisId": "hyp-1771262816491-o8d0tr"
-  }
+    "title": "Hypo1",
+    "description": "Hypo1"
+  },
+  "H2": {
+    "id": "H2",
+    "title": "Hypo2",
+    "description": "Hypo2"
+  },
+  "H3": {
+    "id": "H3",
+    "title": "Hypo3",
+    "description": "Hypo3"
+  },
+  "H4": {
+    "id": "H4",
+    "title": "Hypo4",
+    "description": "Hypo4"
+  },
+  "H5": {
+    "id": "H5",
+    "title": "Hypo5",
+    "description": "Hypo5"
+  },
+  "intelligence_requirement": "Suomen lähialueen muutokset keskipitkällä aikavälillä"
 }

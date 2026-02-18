@@ -103,10 +103,11 @@ function serveFile(filePath, res) {
   });
 }
 
-const EVIDENCE_JSON_PATH = path.join(ROOT, "evidence_example.json");
+const EVIDENCE_JSON_PATH = path.join(ROOT, "..", "..", "data", "evidence.json");
 const EVIDENCE_JSONL_PATH = path.join(ROOT, "evidence_list.jsonl");
 const HYPOTHESIS_JSON_PATH = path.join(ROOT, "hypothesis_example.json");
 const INPUT_HYPOTHESIS_JSON_PATH = path.join(ROOT, "input", "hypothesis.json");
+const DATA_HYPOTHESIS_JSON_PATH = path.join(ROOT, "..", "..", "data", "hypothesis.json");
 
 function collectEvidenceNodes(node, out) {
   if (!node) return;
@@ -257,6 +258,43 @@ const server = http.createServer((req, res) => {
       }
       const json = JSON.stringify(body, null, 2);
       fs.writeFile(INPUT_HYPOTHESIS_JSON_PATH, json, "utf8", (err) => {
+        if (err) {
+          send(res, 500, JSON.stringify({ ok: false, error: err.message }), "application/json");
+          return;
+        }
+        send(res, 200, JSON.stringify({ ok: true }), "application/json");
+      });
+    });
+    return;
+  }
+
+  if (req.method === "GET" && urlPath === "/api/evidence") {
+    serveFile(EVIDENCE_JSON_PATH, res);
+    return;
+  }
+
+  if (req.method === "GET" && urlPath === "/api/hypothesis") {
+    serveFile(DATA_HYPOTHESIS_JSON_PATH, res);
+    return;
+  }
+
+  if (req.method === "POST" && urlPath === "/api/save-data-hypothesis") {
+    const chunks = [];
+    req.on("data", (chunk) => chunks.push(chunk));
+    req.on("end", () => {
+      let body;
+      try {
+        body = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+      } catch (e) {
+        send(res, 400, JSON.stringify({ ok: false, error: "Invalid JSON" }), "application/json");
+        return;
+      }
+      if (typeof body !== "object" || body === null || Array.isArray(body)) {
+        send(res, 400, JSON.stringify({ ok: false, error: "Expected JSON object" }), "application/json");
+        return;
+      }
+      const json = JSON.stringify(body, null, 2);
+      fs.writeFile(DATA_HYPOTHESIS_JSON_PATH, json, "utf8", (err) => {
         if (err) {
           send(res, 500, JSON.stringify({ ok: false, error: err.message }), "application/json");
           return;

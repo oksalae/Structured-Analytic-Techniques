@@ -25,15 +25,71 @@ const MIME = {
   '.txt': 'text/plain; charset=utf-8',
 };
 
+const SCENARIOS_PATH = path.join(ROOT, 'data', 'scenarios.json');
+const EVIDENCE_PATH = path.join(ROOT, 'data', 'evidence.json');
+
 const hubServer = http.createServer((req, res) => {
+  const urlPath = (req.url || '/').split('?')[0];
+
+  if (req.method === 'POST' && urlPath === '/api/save-evidence') {
+    let body = '';
+    req.on('data', (chunk) => { body += chunk; });
+    req.on('end', () => {
+      try {
+        JSON.parse(body);
+        fs.mkdirSync(path.dirname(EVIDENCE_PATH), { recursive: true });
+        fs.writeFileSync(EVIDENCE_PATH, body, 'utf8');
+        res.setHeader('Content-Type', 'application/json');
+        res.writeHead(200);
+        res.end('{"ok":true}');
+      } catch (e) {
+        res.writeHead(400);
+        res.end('{"error":"Invalid JSON"}');
+      }
+    });
+    return;
+  }
+
+  if (req.method === 'POST' && urlPath === '/api/save-scenarios') {
+    let body = '';
+    req.on('data', (chunk) => { body += chunk; });
+    req.on('end', () => {
+      try {
+        JSON.parse(body);
+        fs.mkdirSync(path.dirname(SCENARIOS_PATH), { recursive: true });
+        fs.writeFileSync(SCENARIOS_PATH, body, 'utf8');
+        res.setHeader('Content-Type', 'application/json');
+        res.writeHead(200);
+        res.end('{"ok":true}');
+      } catch (e) {
+        res.writeHead(400);
+        res.end('{"error":"Invalid JSON"}');
+      }
+    });
+    return;
+  }
+
+  if (req.method === 'GET' && urlPath === '/api/load-scenarios') {
+    if (fs.existsSync(SCENARIOS_PATH)) {
+      res.setHeader('Content-Type', 'application/json');
+      res.writeHead(200);
+      fs.createReadStream(SCENARIOS_PATH).pipe(res);
+    } else {
+      res.setHeader('Content-Type', 'application/json');
+      res.writeHead(200);
+      res.end('[]');
+    }
+    return;
+  }
+
   if (req.method !== 'GET') {
     res.writeHead(405);
     res.end();
     return;
   }
-  let urlPath = (req.url || '/').split('?')[0];
-  if (urlPath === '/') urlPath = '/index.html';
-  const safePath = path.normalize(urlPath).replace(/^(\.\.(\/|\\))+/, '');
+  let filUrlPath = urlPath;
+  if (filUrlPath === '/') filUrlPath = '/index.html';
+  const safePath = path.normalize(filUrlPath).replace(/^(\.\.(\/|\\))+/, '');
   const filePath = path.join(ROOT, safePath);
   if (!filePath.startsWith(ROOT)) {
     res.writeHead(403);

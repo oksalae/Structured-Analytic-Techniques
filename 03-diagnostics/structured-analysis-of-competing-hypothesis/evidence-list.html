@@ -37,6 +37,8 @@
       font-size: 1.1rem;
       font-weight: 600;
       color: #e0e0e0;
+      flex: 1;
+      text-align: center;
     }
     .events-header .events-header-left { flex-shrink: 0; }
     .events-header .panel-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
@@ -706,8 +708,18 @@
       box-sizing: border-box;
     }
     .row-edit-actions { margin-top: 1rem; display: flex; justify-content: flex-end; gap: 0.5rem; }
-    .ach-cell-h { cursor: pointer; }
-    .ach-cell-h:hover { background: #252525; }
+    .ach-cell-h { cursor: default; }
+    .ach-inline-select {
+      background: #1a1a1a;
+      color: #e0e0e0;
+      border: 1px solid #444;
+      border-radius: 3px;
+      padding: 0.2rem 0.1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: center;
+    }
+    .ach-inline-select:hover { border-color: #7eb8da; }
     .add-evidence-bar { margin-top: 1rem; padding: 0.5rem 0; }
     .add-evidence-btn { font-size: 0.95rem; }
     #add-evidence-modal { z-index: 1003; }
@@ -774,26 +786,6 @@
         </a>
       </div>
       <h2 class="events-title">Analysis of Competing Hypothesis for Structured Analysis Techniques</h2>
-<div class="panel-actions">
-          <div class="dropdown-wrap">
-            <button type="button" class="btn" id="import-btn">Import</button>
-            <div class="dropdown-menu" id="import-dropdown">
-              <button type="button" id="import-hypothesis-btn">Import Hypothesis</button>
-              <button type="button" id="import-evidence-btn">Import Evidence</button>
-            </div>
-          </div>
-          <div class="dropdown-wrap">
-            <button type="button" class="btn" id="export-btn">Export</button>
-            <div class="dropdown-menu" id="export-dropdown">
-              <button type="button" id="export-hypothesis-btn">Export Hypothesis</button>
-              <button type="button" id="export-evidence-btn">Export Evidence</button>
-            </div>
-          </div>
-          <div class="update-file-wrap">
-          <button type="button" class="btn" id="update-btn">Update from file</button>
-          <p class="update-file-hint hidden" id="update-file-hint">If no custom file is set, data is loaded from <strong>evidence_example.json</strong>. Click &quot;Update from file&quot; and enter a filename to use your own file. <button type="button" class="link-btn" id="reset-update-file-btn">Reset to default file</button></p>
-        </div>
-        </div>
     </div>
     <div class="hypothesis-and-counters">
       <div class="intelligence-requirement-box">
@@ -807,7 +799,7 @@
       <div class="hypothesis-box" id="hypothesis-box">
         <div class="hypothesis-box-header">
           <h2>Hypothesis</h2>
-          <button type="button" class="btn hypothesis-update-btn" id="hypothesis-update-btn" aria-label="Update from input file" title="Update from input/hypothesis.json">Update</button>
+          <button type="button" class="btn hypothesis-update-btn" id="hypothesis-update-btn" aria-label="Update from file" title="Update from data/hypothesis.json">Update</button>
           <button type="button" class="btn hypothesis-clear-btn" id="hypothesis-clear-btn" aria-label="Clear hypothesis list" title="Clear the list (does not save)">Clear hypothesis</button>
           <button type="button" class="hypothesis-toggle-btn" id="hypothesis-toggle-btn" aria-label="Hide hypothesis" title="Hide hypothesis">▼ Hide</button>
         </div>
@@ -856,7 +848,7 @@
       <table class="ach-matrix" id="ach-matrix">
         <thead>
           <tr>
-            <th class="ach-th ach-event"><span class="ach-evidence-header"><span class="ach-evidence-header-label">Evidence</span><button type="button" class="btn ach-evidence-import-btn" id="evidence-header-import-btn">Import Evidence</button></span></th>
+            <th class="ach-th ach-event"><span class="ach-evidence-header"><span class="ach-evidence-header-label">Evidence</span><button type="button" class="btn ach-evidence-import-btn" id="evidence-header-read-btn">Read Evidence from File</button></span></th>
             <th class="ach-th ach-h1" id="ach-th-h1">H1</th>
             <th class="ach-th ach-h2" id="ach-th-h2">H2</th>
             <th class="ach-th ach-h3" id="ach-th-h3">H3</th>
@@ -871,7 +863,7 @@
     <div class="add-evidence-bar">
       <button type="button" class="btn add-evidence-btn" id="add-evidence-btn">Add new evidence</button>
     </div>
-    <p class="loading" id="status">Loading evidence_example.json…</p>
+    <p class="loading" id="status">Loading evidence…</p>
   </div>
 
   <div id="add-evidence-modal" class="event-detail-modal" aria-hidden="true">
@@ -935,7 +927,7 @@
         return null;
       }
 
-      // Persists evidence tree to evidence_example.json. Every evidence Save (modal, inline, add) must call this.
+      // Persists evidence tree to data/evidence.json. Every evidence Save (modal, inline, add) must call this.
       function saveEvidenceTree(root, onDone) {
         if (!root) {
           statusEl.textContent = 'No data to save.';
@@ -1077,7 +1069,8 @@
           var sum = 0;
           items.forEach(function (item) {
             var v = (item[k] != null ? String(item[k]) : '').trim();
-            if (v === '-' || v === '--') sum++;
+            if (v === '--') sum += 2;
+            else if (v === '-') sum += 1;
           });
           return '<tr><th>' + escapeHtml(k) + '</th><td><strong>' + sum + '</strong></td></tr>';
         }).join('');
@@ -1120,6 +1113,14 @@
         function cellVal(v) {
           if (v === undefined || v === null || String(v).trim() === '') return '<span class="ach-empty">·</span>';
           return escapeHtml(String(v).trim());
+        }
+        function inlineSelect(nodeId, key, currentVal) {
+          var val = (currentVal != null && currentVal !== '') ? String(currentVal).trim() : '';
+          var opts = ['', '++', '+', '0', '-', '--'];
+          return '<select class="ach-inline-select" data-node-id="' + escapeHtml(nodeId) + '" data-key="' + escapeHtml(key) + '">' +
+            opts.map(function (o) {
+              return '<option value="' + escapeHtml(o) + '"' + (val === o ? ' selected' : '') + '>' + (o || '—') + '</option>';
+            }).join('') + '</select>';
         }
         function validRowColor(c) {
           if (!c || typeof c !== 'string') return '';
@@ -1166,11 +1167,11 @@
           return (
             '<tr data-id="' + escapeHtml(item.id) + '" draggable="true"' + rowStyle + '>' +
             '<td class="ach-cell-event">' + cardHtml + '</td>' +
-            '<td class="ach-cell-h">' + cellVal(item.H1) + '</td>' +
-            '<td class="ach-cell-h">' + cellVal(item.H2) + '</td>' +
-            '<td class="ach-cell-h">' + cellVal(item.H3) + '</td>' +
-            '<td class="ach-cell-h">' + cellVal(item.H4) + '</td>' +
-            '<td class="ach-cell-h">' + cellVal(item.H5) + '</td>' +
+            '<td class="ach-cell-h">' + inlineSelect(item.id, 'H1', item.H1) + '</td>' +
+            '<td class="ach-cell-h">' + inlineSelect(item.id, 'H2', item.H2) + '</td>' +
+            '<td class="ach-cell-h">' + inlineSelect(item.id, 'H3', item.H3) + '</td>' +
+            '<td class="ach-cell-h">' + inlineSelect(item.id, 'H4', item.H4) + '</td>' +
+            '<td class="ach-cell-h">' + inlineSelect(item.id, 'H5', item.H5) + '</td>' +
             '<td class="ach-cell-analysis"><div class="ach-analysis-wrap" data-id="' + escapeHtml(item.id) + '"><div class="ach-analysis-view">' + (item.analysis_description ? escapeHtml(item.analysis_description) : '<span class="ach-empty">Click to add analysis</span>') + '</div></div></td>' +
             '</tr>'
           );
@@ -1225,8 +1226,8 @@
       }
 
       function loadAndRender(isUpdate) {
-        var fileName = 'evidence_example.json';
-        var msg = isUpdate ? 'Updating…' : 'Loading ' + fileName + '…';
+        var fileName = 'api/evidence';
+        var msg = isUpdate ? 'Updating…' : 'Loading evidence…';
         statusEl.textContent = msg;
         statusEl.classList.remove('error');
         if (updateBtn) updateBtn.disabled = true;
@@ -1297,12 +1298,16 @@
         updateBtn.addEventListener('click', function () {
           if (updateFileHint) updateFileHint.classList.toggle('hidden');
           if (updateFromFileName === null || updateFromFileName === '') {
-            var entered = prompt('Enter the JSON file name to update from (leave empty for evidence_example.json):', 'evidence_example.json');
+            var entered = prompt('Enter the JSON file name to update from (leave empty for data/evidence.json):', '');
             if (entered === null) return;
-            updateFromFileName = (entered && entered.trim()) ? entered.trim() : 'evidence_example.json';
+            updateFromFileName = (entered && entered.trim()) ? entered.trim() : '';
             try { localStorage.setItem('ach-update-filename', updateFromFileName); } catch (e) {}
           }
-          loadFromFile(updateFromFileName, true);
+          if (!updateFromFileName) {
+            loadAndRender(true);
+          } else {
+            loadFromFile(updateFromFileName, true);
+          }
         });
       }
       var resetUpdateFileBtn = document.getElementById('reset-update-file-btn');
@@ -1310,7 +1315,7 @@
         resetUpdateFileBtn.addEventListener('click', function () {
           updateFromFileName = '';
           try { localStorage.removeItem('ach-update-filename'); } catch (e) {}
-          statusEl.textContent = 'Using default file (evidence_example.json) for next Update from file.';
+          statusEl.textContent = 'Using default file (data/evidence.json) for next Update from file.';
           statusEl.classList.remove('error');
         });
       }
@@ -1449,11 +1454,12 @@
           importJsonInput.click();
         });
       }
-      var evidenceHeaderImportBtn = document.getElementById('evidence-header-import-btn');
-      if (evidenceHeaderImportBtn && importJsonInput) {
-        evidenceHeaderImportBtn.addEventListener('click', function () {
-          importJsonInput.value = '';
-          importJsonInput.click();
+      var evidenceHeaderReadBtn = document.getElementById('evidence-header-read-btn');
+      if (evidenceHeaderReadBtn) {
+        evidenceHeaderReadBtn.addEventListener('click', function () {
+          statusEl.textContent = 'Reading evidence from file…';
+          statusEl.classList.remove('error');
+          loadAndRender(true);
         });
       }
       importJsonInput.addEventListener('change', function () {
@@ -1524,33 +1530,23 @@
         });
       }
 
-      achTbody.addEventListener('click', function (e) {
-        if (e.target.closest('td.ach-cell-h')) {
-          var td = e.target.closest('td.ach-cell-h');
-          var tr = td.closest('tr');
-          var evidenceItem = tr ? tr.querySelector('.evidence-item') : null;
-          if (evidenceItem && currentRoot) {
-            var id = evidenceItem.getAttribute('data-id');
-            if (id) openRowEditModal(id);
-          }
-          return;
-        }
-        if (e.target.closest('.ach-analysis-save-btn')) {
-          var wrap = e.target.closest('.ach-analysis-wrap');
-          if (!wrap || !currentRoot) return;
-          var id = wrap.getAttribute('data-id');
-          var ta = wrap.querySelector('textarea');
-          var val = ta ? ta.value : '';
-          var node = findNodeById(currentRoot, id);
-          if (node) {
-            node.analysis_description = val;
-            statusEl.textContent = 'Saving…';
-            statusEl.classList.remove('error');
+      achTbody.addEventListener('change', function (e) {
+        var sel = e.target.closest('.ach-inline-select');
+        if (sel && currentRoot) {
+          var nodeId = sel.getAttribute('data-node-id');
+          var key = sel.getAttribute('data-key');
+          var node = findNodeById(currentRoot, nodeId);
+          if (node && key) {
+            node[key] = sel.value;
             saveEvidenceTree(currentRoot, function () { statusEl.textContent = ''; });
-            renderWithData(currentRoot);
+            var items = [];
+            collectEvidenceNodes(currentRoot, items);
+            updateHypothesisCounters(items);
           }
-          return;
         }
+      });
+
+      achTbody.addEventListener('click', function (e) {
         if (e.target.closest('.ach-analysis-view')) {
           var wrap = e.target.closest('.ach-analysis-wrap');
           if (!wrap || wrap.querySelector('textarea')) return;
@@ -1558,9 +1554,19 @@
           var id = wrap.getAttribute('data-id');
           var node = findNodeById(currentRoot, id);
           var current = (node && node.analysis_description != null) ? String(node.analysis_description) : '';
-          wrap.innerHTML = '<div class="ach-analysis-edit-wrap"><textarea class="ach-analysis-ta" placeholder="Analysis…">' + escapeHtml(current) + '</textarea><button type="button" class="ach-analysis-save-btn">Save</button></div>';
+          wrap.innerHTML = '<div class="ach-analysis-edit-wrap"><textarea class="ach-analysis-ta" placeholder="Analysis…">' + escapeHtml(current) + '</textarea></div>';
           var ta = wrap.querySelector('textarea');
-          if (ta) ta.focus();
+          if (ta) {
+            ta.focus();
+            ta.addEventListener('blur', function () {
+              var val = ta.value;
+              if (node) {
+                node.analysis_description = val;
+                saveEvidenceTree(currentRoot, function () { statusEl.textContent = ''; });
+              }
+              wrap.innerHTML = '<div class="ach-analysis-view">' + (val ? escapeHtml(val) : '<span class="ach-empty">Click to add analysis</span>') + '</div>';
+            });
+          }
           return;
         }
 
@@ -2037,19 +2043,19 @@
         hypothesisUpdateBtn.addEventListener('click', function () {
           if (!hypothesisListEl || !hypothesisStatusEl) return;
           hypothesisStatusEl.textContent = 'Updating…';
-          fetch('input/hypothesis.json?t=' + Date.now(), { cache: 'no-store' })
+          fetch('api/hypothesis?t=' + Date.now(), { cache: 'no-store' })
             .then(function (r) {
               if (!r.ok) throw new Error(r.status);
               return r.json();
             })
             .then(function (data) {
               applyHypothesisData(data);
-              statusEl.textContent = 'Hypotheses updated from input/hypothesis.json.';
+              statusEl.textContent = 'Hypotheses updated from data/hypothesis.json.';
               statusEl.classList.remove('error');
             })
             .catch(function () {
-              hypothesisStatusEl.textContent = 'Update failed (input/hypothesis.json not found or invalid).';
-              statusEl.textContent = 'Update failed. Check input/hypothesis.json.';
+              hypothesisStatusEl.textContent = 'Update failed (data/hypothesis.json not found or invalid).';
+              statusEl.textContent = 'Update failed. Check data/hypothesis.json.';
               statusEl.classList.add('error');
             });
         });
@@ -2101,7 +2107,7 @@
         var actionsEl = document.getElementById('hypothesis-modal-actions');
         if (actionsEl) actionsEl.style.display = 'none';
       }
-      // Hypothesis Save writes to input/hypothesis.json (same file as Update reads from).
+      // Hypothesis Save writes to data/hypothesis.json (same file as Update reads from).
       var hypothesisSaveBtn = document.getElementById('hypothesis-save-btn');
       if (hypothesisSaveBtn) {
         hypothesisSaveBtn.addEventListener('click', function () {
@@ -2115,7 +2121,7 @@
           closeHypothesisModal();
           statusEl.textContent = 'Saving to file…';
           statusEl.classList.remove('error');
-          fetch('input/hypothesis.json?t=' + Date.now(), { cache: 'no-store' })
+          fetch('api/hypothesis?t=' + Date.now(), { cache: 'no-store' })
             .then(function (r) { return r.ok ? r.json() : {}; })
             .catch(function () { return {}; })
             .then(function (existing) {
@@ -2125,7 +2131,7 @@
               hypothesisData.forEach(function (h) {
                 existing[h.id] = { id: h.id, title: h.title || '', description: h.description || '' };
               });
-              return fetch('api/save-input-hypothesis', {
+              return fetch('api/save-data-hypothesis', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(existing)
@@ -2137,7 +2143,7 @@
             })
             .then(function (data) {
               if (data && data.ok) {
-                statusEl.textContent = 'Written to input/hypothesis.json.';
+                statusEl.textContent = 'Written to data/hypothesis.json.';
                 hypothesisListEl.innerHTML = hypothesisData.map(function (h, i) {
                   return '<li class="hypothesis-item" data-index="' + i + '">' + escapeHtml(h.id) + ' ' + escapeHtml(h.title) + '</li>';
                 }).join('');
@@ -2197,13 +2203,13 @@
       if (irSaveBtn && intelligenceRequirementInput) {
         irSaveBtn.addEventListener('click', function () {
           var value = intelligenceRequirementInput.value.trim();
-          fetch('input/hypothesis.json?t=' + Date.now(), { cache: 'no-store' })
+          fetch('api/hypothesis?t=' + Date.now(), { cache: 'no-store' })
             .then(function (r) { return r.ok ? r.json() : {}; })
             .catch(function () { return {}; })
             .then(function (data) {
               if (typeof data !== 'object' || data === null || Array.isArray(data)) data = {};
               data.intelligence_requirement = value;
-              return fetch('api/save-input-hypothesis', {
+              return fetch('api/save-data-hypothesis', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -2213,7 +2219,7 @@
             .then(function (result) {
               if (result && result.ok) {
                 intelligenceRequirementInput.readOnly = true;
-                statusEl.textContent = 'Intelligence requirement saved to input/hypothesis.json.';
+                statusEl.textContent = 'Intelligence requirement saved to data/hypothesis.json.';
                 statusEl.classList.remove('error');
               } else {
                 statusEl.textContent = 'Save failed: ' + (result && result.error ? result.error : 'Unknown error');
