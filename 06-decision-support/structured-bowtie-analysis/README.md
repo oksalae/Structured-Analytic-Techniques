@@ -2,7 +2,7 @@
 
 This is a lightweight, browser-based **Bowtie Analysis** builder for structured analysis. It helps you map a **Top Event** (loss of control) and connect it to **Threats** (causes) on the left and **Consequences** (outcomes) on the right—then deepen the analysis with **Barriers**, **Escalation Factors**, and **Escalation Factor Barriers**.
 
-![Bowtie Analysis UI](Structured-Analytic-Techniques\06-decision-support\structured-bowtie-analysis\assets\img\bowtie-ui.png)
+![Bowtie Analysis UI](assets\img\bowtie-ui.png)
 
 ## What it does
 
