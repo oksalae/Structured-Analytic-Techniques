@@ -1,30 +1,49 @@
-# Depth Event Map (Structured Analysis of Leaders)
+# Bowtie Analysis Tool (Structured Analytic Techniques)
 
-A single-page web UI for building a **Depth Event Map**: a rooted, branching map around a central **Root** event with events arranged in depth lanes (left and right). Layout is fully automatic; no drag-and-drop.
+This is a lightweight, browser-based **Bowtie Analysis** builder for structured analysis. It helps you map a **Top Event** (loss of control) and connect it to **Threats** (causes) on the left and **Consequences** (outcomes) on the right—then deepen the analysis with **Barriers**, **Escalation Factors**, and **Escalation Factor Barriers**.
 
-## Features
+![Bowtie Analysis UI](Structured-Analytic-Techniques\06-decision-support\structured-bowtie-analysis\assets\img\bowtie-ui.png/bowtie-ui.png)
 
-- **Root at center** with two “+” buttons (left / right) to add Depth 1 events.
-- **Depth lanes**: vertical columns labeled Depth 1, 2, 3… on each side; nodes align by (side, depth).
-- **Curved connectors** (Bezier) from parent to child.
-- **Editable event boxes**: click to edit text; blur to save.
-- **Add child**: “+” on the outer edge of any node adds a child in the next depth lane on the same side.
-- **Delete**: select a node (click) and press Delete/Backspace; confirm to remove the node and its subtree.
-- **Pan**: drag the background. **Zoom**: mouse wheel. **Center on Root** / **Fit to view** toolbar buttons.
-- **Import JSON**: load a previously exported nested JSON (validated; errors shown without changing current state).
-- **Export**: **Copy JSON** / **Download JSON** in nested format with `children` arrays.
-- **Nesting panel**: **Outline** (collapsible tree) and **JSON** (formatted export + Copy).
+## What it does
 
-## Data format
+- **Creates a nested Bowtie structure** around a fixed root **Top Event**.
+- Lets you build both sides of the bowtie:
+  - **Left side (prevention chain):** Threat → Preventive Barrier → Escalation Factor → Escalation Factor Barrier
+  - **Right side (mitigation chain):** Consequence → Recovery Barrier → Escalation Factor → Escalation Factor Barrier
+- Includes a **Hazard** node above the Top Event to describe the risky activity or context.
+- Automatically **centers and reflows** children around their parent so the diagram stays readable as it grows.
+- Draws connectors between nodes to show relationships.
+- Provides **“?” info tooltips** for each lane/type (Hazard, Threat, Consequence, barriers, escalation factors).
 
-Export is a nested tree:
+## How to use
 
-- `version: 1`
-- `root`: `{ id: "root", text: "...", children: [ ... ] }`
-- Each non-root node has `side: "left" | "right"` and `children: []`.
+- **Add nodes:** click the **+** buttons on a node to add children on the appropriate side.
+- **Edit text:** click into a node and type.
+- **Delete nodes:** use the **−** button (deletes the node and its descendants).
+- **Navigate:** pan by dragging the background; zoom with the mouse wheel.
 
-Import requires valid structure, unique IDs, and `side` on non-root nodes.
+## Import / Export
 
-## How to run
+Use the **File** menu:
+- **Download JSON** exports the current bowtie as a nested JSON file.
+- **Import JSON** loads a previously exported JSON file and recreates the diagram.
 
-Open `index.html` in a modern browser (no server required).
+## Data model (high level)
+
+The diagram is stored as a nested tree:
+- Root is the **Top Event** (`root`)
+- Children branch left/right using `side: "left" | "right"`
+- Deeper levels represent barriers and escalation structures
+
+A separate `hazard` field stores the Hazard text shown above the Top Event.
+
+## Run locally
+
+Open the HTML file in a browser (no build step required):
+
+- Double-click the `.html` file, or
+- Serve the folder with any static server (optional)
+
+```bash
+# example (optional)
+python -m http.server 8000
