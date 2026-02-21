@@ -1,8 +1,8 @@
 /**
  * Start hub and all tools with reserved ports per HUB-PAGE-INSTRUCTIONS.md:
  * Hub 3000, Causal Map 8765, Timeline 8080, Circleboarding 8082,
- * Multiple Hypothesis 8083, Competing Hypothesis 8084.
- * Reserved for future: 8085, 8086, 8087, 8088.
+ * Multiple Hypothesis 8083, Competing Hypothesis 8084, Bowtie Analysis 8085.
+ * Reserved for future: 8086, 8087, 8088.
  * Run from repo root: node start-all.js
  * Press Ctrl+C to stop all servers.
  */
@@ -115,12 +115,18 @@ const SERVERS = [
   { name: 'Circleboarding', dir: '02-exploration/structured-analytic-circleboarding', port: 8082 },
   { name: 'Multiple Hypothesis Generation', dir: '03-diagnostics/structured-analytic-multiple-hypothesis-generation', port: 8083 },
   { name: 'Competing Hypothesis', dir: '03-diagnostics/structured-analysis-of-competing-hypothesis', port: 8084 },
+  { name: 'Bowtie Analysis', dir: '06-decision-support/structured-bowtie-analysis', port: 8085, vite: true },
 ];
 
 function run(entry) {
   if (!entry.dir) return null;
-  const child = spawn(process.execPath, ['server.js'], {
-    cwd: path.join(ROOT, entry.dir),
+  const cwd = path.join(ROOT, entry.dir);
+  const cmd = entry.vite ? 'npm' : process.execPath;
+  const args = entry.vite
+    ? ['run', 'dev', '--', '--port', String(entry.port)]
+    : ['server.js'];
+  const child = spawn(cmd, args, {
+    cwd,
     stdio: ['ignore', 'ignore', 'inherit'],
   });
   child.on('error', (err) => console.error(`[${entry.name}] error:`, err));
